@@ -1,0 +1,16 @@
+.next/
+build/
+dist/
+node_modules/
+target/
+coverage/
+snapshot/
+generated/
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+.DS_Store
+/package
+.env
+.env.*
+!.env.example

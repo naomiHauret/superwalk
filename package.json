@@ -7,10 +7,11 @@
     "build": "turbo build",
     "dev": "turbo dev",
     "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md,json,js,jsx,astro,css}\""
   },
   "devDependencies": {
     "prettier": "^3.2.5",
+    "prettier-plugin-astro": "^0.13.0",
     "turbo": "^2.0.11",
     "typescript": "^5.4.5"
   },
