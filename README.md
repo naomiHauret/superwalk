@@ -1,81 +1,91 @@
-# Turborepo starter
+# superwalk
 
-This is an official starter Turborepo.
+> A competitive steps-tracking game where walking more isn’t just about winning — it’s about outsmarting your opponents (and occasionally having them slip on a banana peel).
 
-## Using this example
+Entry for [Superhack 2024 hackathon](https://ethglobal.com/events/superhack2024).
+ 
+**Superwalk** is an Android app that blends your regular step tracker with a party game that’s so fun and simple, you’ll want to play it with everyone — even your grandma.
 
-Run the following command:
+ The game runs for 24 hours, divided into 60-minute turns, during which each player's step count is automatically reported every 10 minutes.
 
-```sh
-npx create-turbo@latest
+ At the beginning of every turn, players can earn new in-game items, as long as their step count increased compared to the previous turn. These items can be offensive, defensive, or have a boosting effect, with each items having their own success rate to keep the game fun and balanced. 
+ 
+ During the first 15 minutes of each turn, players can decide to either use of their items to change the course of the competition, or bribe another user to cancel their attack.
+
+Every players' step count resets veryday at 12 AM UTC+0, challenging them to keep a streak and trying out new strategies to climb in the leaderboard.
+
+---
+
+> This repository is   monorepo for Superwalk products that relies on [pnpm workspaces](https://pnpm.sh/guides/install/workspaces) and [Turborepo](https://turbo.build/repo/docs).
+
+You will find the following workspaces :
+
+1. **Tooling**
+
+2. **Internal packages**
+
+3. **Applications and products**
+
+# Get started
+
+> Pre-requisites: have `node` (>=21.5.0) and `pnpm` installed
+
+
+## Front-end
+
+### Android app
+
+### Webapp
+
+### Docs
+
+## Smart contracts and ABIs
+
+## Monorepo and development tasks
+
+### How to...
+
+1. Install a package in a specific workspace: `pnpm -F <workspace> add <package name(s)>`
+
+Example:
+
+```bashrc
+# install the package `@wagmi/core` in @superwalk/webapp 
+pnpm -F @superwalk/webapp add @wagmi/core
 ```
 
-## What's inside?
+2. Launch a script in all workspaces where this script is defined: `turbo run <script name>`
+   Examples :
 
-This Turborepo includes the following packages/apps:
-
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm build
+```bashrc
+# run the `dev` script for all workspaces that have a `dev` script defined
+turbo run dev
 ```
 
-### Develop
-
-To develop all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm dev
+```bashrc
+#  run the `build` script for all workspaces that have a `dev` script defined
+turbo run build
 ```
 
-### Remote Caching
+3. Launch a script in specific workspaces only: `turbo run <task name> -F <workspaces>`
 
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+Examples :
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup), then enter the following commands:
-
-```
-cd my-turborepo
-npx turbo login
+```bashrc
+# only run the `dev` script of the @superwalk/webapp workspace
+turbo run dev -F @superwalk/webapp
 ```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-npx turbo link
+```bashrc
+# only run the `build` script of the @superwalk/expo-android workspace
+turbo run build -F @superwalk/expo-android
 ```
 
-## Useful Links
+4. Format code : `pnpm run format`
 
-Learn more about the power of Turborepo:
+---
 
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
+## Recommended resources
+
+- [Turborepo examples](https://github.com/vercel/turbo/tree/main/examples)
+- [Turborepo monorepo handbook](https://turbo.build/repo/docs/handbook/dev)
