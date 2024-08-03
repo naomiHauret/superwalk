@@ -9,7 +9,7 @@ Before getting started, **make sure to**:
 3. Get your Thirdweb client id
 4. Rename the `.env.example` file to `.env` and paste in [your thirdweb client id](https://thirdweb.com/dashboard/settings)
 5. Generate the `android` directory using `expo prebuild --platform android --clean` (run this command whenever you change `app.json` or `app.config.js`)
-6. Build the `android` directory using `expo run:android` 
+6. Build the `android` directory using `expo run:android`
 
 ---
 
