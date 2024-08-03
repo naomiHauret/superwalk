@@ -1,4 +1,4 @@
-node_modules
+
 .pnp
 .pnp.js
 coverage
@@ -20,3 +20,18 @@ yarn-error.log*
 .vercel
 .netlify
 .vscode
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+web-build/
+expo-env.d.ts
+biome.json
+.yalc/
+yalc.lock
+android/
+ios/
+eas/
+node_modules/

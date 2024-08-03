@@ -7,7 +7,10 @@
     "build": "turbo build",
     "dev": "turbo dev",
     "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md,json,js,jsx,astro,css}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md,json,js,jsx,astro,css}\"",
+    "android:prebuild": "pnpm --filter @superwalk/expo-android run prebuild",
+    "android:build": "pnpm --filter @superwalk/expo-android run build",
+    "android:start": "pnpm --filter @superwalk/expo-android run start"
   },
   "devDependencies": {
     "prettier": "^3.2.5",

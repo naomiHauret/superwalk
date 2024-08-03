@@ -28,15 +28,17 @@ You will find the following workspaces :
 
 # Get started
 
-> Pre-requisites: have `node` (>=21.5.0) and `pnpm` installed
+> Pre-requisites: have `node` (>=21.5.0), `pnpm`, [Android Studio](https://developer.android.com) and **Java 17** installed ; an Android device running version >=9 ; preferrably have the [Healthconnect](https://play.google.com/store/apps/details?id=com.google.android.apps.healthdata&hl=en_US) app installed on this device if you're using Android < 14
+
+Install dependencies with `pnpm install`.
 
 ## Front-end
 
 ### Android app
 
-### Webapp
+> Make sure to read `apps/expo-android/README.md` for setup instructions first !
 
-### Docs
+- Run `pnpm run android:start` to launch `@superwalk/expo-android` (Android app) on your device (if you're using a physical device, make sure to connect it to your computer via USB and activate debug mode)
 
 ## Smart contracts and ABIs
 
