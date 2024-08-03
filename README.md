@@ -16,7 +16,7 @@ Every players' step count resets veryday at 12 AM UTC+0, challenging them to kee
 
 ---
 
-> This repository is monorepo for Superwalk products that relies on [pnpm workspaces](https://pnpm.sh/guides/install/workspaces) and [Turborepo](https://turbo.build/repo/docs). It was bootstrapped using Turborepo CLI.
+> This repository is monorepo for Superwalk products that relies on [bun workspaces](https://bun.sh/guides/install/workspaces) and [Turborepo](https://turbo.build/repo/docs). It was bootstrapped using Turborepo CLI.
 
 You will find the following workspaces :
 
@@ -28,9 +28,9 @@ You will find the following workspaces :
 
 # Get started
 
-> Pre-requisites: have `node` (>=21.5.0), `pnpm`, [Android Studio](https://developer.android.com) and **Java 17** installed ; an Android device running version >=9 ; preferrably have the [Healthconnect](https://play.google.com/store/apps/details?id=com.google.android.apps.healthdata&hl=en_US) app installed on this device if you're using Android < 14
+> Pre-requisites: have `node` (>=21.5.0), `bun`, [Android Studio](https://developer.android.com) and **Java 17** installed ; an Android device running version >=9 ; preferrably have the [Healthconnect](https://play.google.com/store/apps/details?id=com.google.android.apps.healthdata&hl=en_US) app installed on this device if you're using Android < 14
 
-Install dependencies with `pnpm install`.
+Install dependencies with `bun install`.
 
 ## Front-end
 
@@ -38,7 +38,7 @@ Install dependencies with `pnpm install`.
 
 > Make sure to read `apps/expo-android/README.md` for setup instructions first !
 
-- Run `pnpm run android:start` to launch `@superwalk/expo-android` (Android app) on your device (if you're using a physical device, make sure to connect it to your computer via USB and activate debug mode)
+- Run `bun run android:start` to launch `@superwalk/expo-android` (Android app) on your device (if you're using a physical device, make sure to connect it to your computer via USB and activate debug mode)
 
 ## Smart contracts and ABIs
 
@@ -46,17 +46,20 @@ Install dependencies with `pnpm install`.
 
 ### How to...
 
-1. Install a package in a specific workspace: `pnpm -F <workspace> add <package name(s)>`
+1. Add dependency to a workspace :
+   `cd` to the workspace and run `bun add <dependency name>`. Bun will detect that you are in a workspace and hoist the dependency as needed.
 
-Example:
+Example :
 
 ```bashrc
-# install the package `@wagmi/core` in @superwalk/webapp
-pnpm -F @superwalk/webapp add @wagmi/core
+# add `tamagui` to the expo-android workspace
+
+cd apps/expo-android && bun add tamagui
 ```
 
 2. Launch a script in all workspaces where this script is defined: `turbo run <script name>`
-   Examples :
+
+Examples :
 
 ```bashrc
 # run the `dev` script for all workspaces that have a `dev` script defined
@@ -82,7 +85,7 @@ turbo run dev -F @superwalk/webapp
 turbo run build -F @superwalk/expo-android
 ```
 
-4. Format code : `pnpm run format`
+4. Format code : simply use `bun run format`
 
 ---
 

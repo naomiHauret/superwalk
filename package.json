@@ -8,9 +8,9 @@
     "dev": "turbo dev",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md,json,js,jsx,astro,css}\"",
-    "android:prebuild": "pnpm --filter @superwalk/expo-android run prebuild",
-    "android:build": "pnpm --filter @superwalk/expo-android run build",
-    "android:start": "pnpm --filter @superwalk/expo-android run start"
+    "android:prebuild": "cd apps/expo-android && bun run prebuild",
+    "android:build": "cd apps/expo-android && bun run build",
+    "android:start": "cd apps/expo-android && bun run start"
   },
   "devDependencies": {
     "prettier": "^3.2.5",
@@ -18,8 +18,13 @@
     "turbo": "^2.0.11",
     "typescript": "^5.4.5"
   },
-  "packageManager": "pnpm@8.15.6",
+  "packageManager": "bun@1.1.21",
   "engines": {
     "node": ">=21.5.0"
-  }
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/*",
+    "tooling/*"
+  ]
 }
