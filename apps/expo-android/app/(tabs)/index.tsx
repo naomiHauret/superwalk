@@ -40,6 +40,7 @@ let isLoggedIn = false
 export default function HomeScreen() {
   const account = useActiveAccount()
   const theme = useColorScheme()
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}

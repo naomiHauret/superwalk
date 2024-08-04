@@ -4,7 +4,7 @@ import { DefaultTheme, ThemeProvider } from '@react-navigation/native'
 import { TamaguiProvider } from 'tamagui'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { useColorScheme } from 'react-native'
-import { queryClient } from '@/services'
+import { ProviderHealthConnectMachine, queryClient } from '@/services'
 import { tamaguiConfig } from '@/tamagui.config'
 
 interface RootProviderProps {
@@ -22,7 +22,9 @@ const RootProvider: FC<RootProviderProps> = (props) => {
     <QueryClientProvider client={queryClient}>
       <ThirdwebProvider>
         <TamaguiProvider config={tamaguiConfig} defaultTheme={colorScheme!}>
-          <ThemeProvider value={DefaultTheme}>{props.children}</ThemeProvider>
+          <ThemeProvider value={DefaultTheme}>
+            <ProviderHealthConnectMachine>{props.children}</ProviderHealthConnectMachine>
+          </ThemeProvider>
         </TamaguiProvider>
       </ThirdwebProvider>
     </QueryClientProvider>

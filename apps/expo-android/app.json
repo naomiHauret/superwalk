@@ -21,7 +21,12 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "dev.superwalk"
+      "package": "dev.superwalk",
+      "permissions": [
+        "android.permission.health.READ_STEPS",
+        "android.permission.health.WRITE_STEPS",
+        "android.permission.health.READ_ACTIVE_CALORIES_BURNED"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -29,22 +34,15 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+      "expo-health-connect",
       "expo-router",
       [
         "expo-build-properties",
         {
           "android": {
+            "compileSdkVersion": 34,
+            "targetSdkVersion": 34,
             "minSdkVersion": 26
-          },
-          "ios": {
-            "extraPods": [
-              {
-                "name": "OpenSSL-Universal",
-                "configurations": ["Release", "Debug"],
-                "modular_headers": true,
-                "version": "3.1.5004"
-              }
-            ]
           }
         }
       ]

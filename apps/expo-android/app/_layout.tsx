@@ -1,6 +1,5 @@
-import { RootProvider } from '@/components'
+import { RootNavigator, RootProvider } from '@/components'
 import { useFonts } from 'expo-font'
-import { Stack } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
 import { type FC, useEffect } from 'react'
 import 'react-native-reanimated'
@@ -11,7 +10,7 @@ SplashScreen.preventAutoHideAsync()
 /**
  * Renders the base layout of our app (shared by all screen)
  */
-const RootLayout: FC = () => {
+const Layout: FC = () => {
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   })
@@ -28,12 +27,9 @@ const RootLayout: FC = () => {
 
   return (
     <RootProvider>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
+      <RootNavigator />
     </RootProvider>
   )
 }
 
-export default RootLayout
+export default Layout

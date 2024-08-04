@@ -25,6 +25,8 @@
     "@tamagui/config": "^1.108.0",
     "@tanstack/react-query": "^5.51.21",
     "@thirdweb-dev/react-native-adapter": "^1.2.0",
+    "@xstate/react": "^4.1.1",
+    "@xstate/store": "^2.0.0",
     "amazon-cognito-identity-js": "^6.3.12",
     "date-fns": "^3.6.0",
     "expo": "~51.0.24",
