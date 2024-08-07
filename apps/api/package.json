@@ -1,0 +1,20 @@
+{
+  "name": "@superwalk/api",
+  "version": "1.0.50",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "bun run --watch src/index.ts",
+    "format": "prettier --write \"**/*.{ts,md,json,js}\""
+  },
+  "dependencies": {
+    "@elysiajs/cors": "^1.1.0",
+    "@supabase/supabase-js": "^2.45.1",
+    "elysia": "latest",
+    "jwt-decode": "^4.0.0",
+    "thirdweb": "^5.44.0"
+  },
+  "devDependencies": {
+    "bun-types": "latest"
+  },
+  "module": "src/index.js"
+}
