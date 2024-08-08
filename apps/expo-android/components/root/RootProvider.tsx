@@ -1,11 +1,14 @@
 import { type FC } from 'react'
 import { ThirdwebProvider } from 'thirdweb/react'
-import { DefaultTheme, ThemeProvider } from '@react-navigation/native'
-import { TamaguiProvider } from 'tamagui'
+import { Theme, ThemeProvider } from '@react-navigation/native'
 import { QueryClientProvider } from '@tanstack/react-query'
-import { useColorScheme } from 'react-native'
-import { ProviderHealthConnectMachine, queryClient } from '@/services'
-import { tamaguiConfig } from '@/tamagui.config'
+import { queryClient, ProviderTrackStepsMachine } from '@/services'
+import { NAV_THEME } from '@/lib/constants'
+
+const LIGHT_THEME: Theme = {
+  dark: false,
+  colors: NAV_THEME.light,
+}
 
 interface RootProviderProps {
   children?: React.ReactNode
@@ -16,16 +19,12 @@ interface RootProviderProps {
  * This provider initializes and enables all other providers required for the app to function properly (theme, queries, auth...)
  */
 const RootProvider: FC<RootProviderProps> = (props) => {
-  const colorScheme = useColorScheme()
-
   return (
     <QueryClientProvider client={queryClient}>
       <ThirdwebProvider>
-        <TamaguiProvider config={tamaguiConfig} defaultTheme={colorScheme!}>
-          <ThemeProvider value={DefaultTheme}>
-            <ProviderHealthConnectMachine>{props.children}</ProviderHealthConnectMachine>
-          </ThemeProvider>
-        </TamaguiProvider>
+        <ThemeProvider value={LIGHT_THEME}>
+          <ProviderTrackStepsMachine>{props.children}</ProviderTrackStepsMachine>
+        </ThemeProvider>
       </ThirdwebProvider>
     </QueryClientProvider>
   )
