@@ -1,9 +1,9 @@
 {
-  "name": "hardhat-javascript-starter",
+  "name": "@superwalk/smart-contracts",
   "scripts": {
-    "build": "npx thirdweb@latest detect",
-    "deploy": "npx thirdweb@latest deploy",
-    "publish": "npx thirdweb@latest publish"
+    "build": "bunx thirdweb@latest detect",
+    "deploy": "bunx thirdweb@latest deploy",
+    "publish": "bunx thirdweb@latest publish"
   },
   "devDependencies": {
     "@matterlabs/hardhat-zksync-solc": "^0.3.17",

@@ -1,3 +1,11 @@
+# @superwalk/smart-contracts
+
+Smart contracts for Superwalk app.
+
+---
+
+> This project was bootstrapped using `thirdweb create contract`. Read more on the [Thirdweb documentation](https://portal.thirdweb.com/contracts/build/get-started).
+
 ## Getting Started
 
 Create a project using this example:

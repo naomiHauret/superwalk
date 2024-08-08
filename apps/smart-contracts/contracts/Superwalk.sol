@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+
 contract SuperwalkCompetition {
   enum EffectType { Offensive, Defensive, Boost }
   enum EffectValueType { Percent, Absolute }
@@ -47,6 +49,7 @@ contract SuperwalkCompetition {
   mapping(uint256 => GameItem) public items;
 
   event PlayerJoined(address indexed player, string metadata);
+  event StepsCountReported(address indexed player, uint256 steps);
   event ActionPerformed(address indexed player, ActionType actionType, uint256 itemId, address targetPlayer);
   event ScoreUpdated(address indexed player, uint256 score);
   event TurnEnded(uint256 turnNumber);
@@ -98,6 +101,7 @@ contract SuperwalkCompetition {
     require(players[_player].exists, "Player does not exist");
     Player storage player = players[_player];
     player.currentSteps = updatedStepsCount;
+    emit StepsCountReported(_player, updatedStepsCount);
   }
   /*
     Let player perform an action during the action window of the current turn.
@@ -126,11 +130,11 @@ contract SuperwalkCompetition {
 
     } else if (actionType == ActionType.Bribe) {
         require(player.currentSteps > 0, "Insufficient steps for bribe");
-        uint256 bribeAmount = 0; // placeholder
-        // Calculate bribe...
+        uint256 _steps = player.currentSteps > 0 ? player.currentSteps : 1;
+        uint256 bribeAmount = (5 * _steps) / 10000; 
 
         //. .. Logic to transfer bribe token from player to targetPlayer ...
-
+        IERC20(bribeErc20TokenAddress).transferFrom(msg.sender, targetPlayer, bribeAmount);
         emit BribeSent(msg.sender, targetPlayer, bribeAmount);
     }
 
