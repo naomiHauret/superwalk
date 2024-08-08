@@ -120,9 +120,6 @@ const app = new Elysia()
         if (!authResult.valid) {
           return (set.status = 'Unauthorized')
         }
-
-        const decoded = jwtDecode(jwt.value)
-        if (decoded.sub !== body?.player || !body?.player) return (set.status = 'Unauthorized')
       },
     },
     (app) =>
@@ -130,11 +127,16 @@ const app = new Elysia()
         // Record player's steps in the database
         .post(
           '/api/player/steps',
-          async ({ body: { count, player }, cookie, headers }) => {
+          async ({ body: { count }, cookie, headers }) => {
+            console.log('Synchronizing at ', new Date())
+            const decodedJwt = jwtDecode(cookie.jwt.value)
+            const player = decodedJwt.sub
             const { data, error } = await supabase
-              .from('DailyStepCount')
-              .insert([{ player: player, updated_count: count, source: 'FROMAPI' }])
+              .from('StepsReports')
+              .insert([{ player, updated_count: count, source: StepCountReportSource.self }])
               .select()
+
+            console.log('inserted ', data, error)
             return {
               data,
               error,
@@ -143,7 +145,6 @@ const app = new Elysia()
           {
             type: 'json',
             body: t.Object({
-              player: t.String(),
               count: t.Integer({ minimum: 0 }),
             }),
           },
