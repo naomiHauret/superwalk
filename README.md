@@ -1,6 +1,6 @@
 # superwalk
 
-> A competitive steps-tracking game where walking more isn’t just about winning — it’s about outsmarting your opponents (and occasionally having them slip on a banana peel).
+> A competitive, all around the clock steps-tracking party game where walking more isn’t just about winning — it’s about outsmarting your opponents (and occasionally having them slip on a banana peel).
 
 Entry for [Superhack 2024 hackathon](https://ethglobal.com/events/superhack2024).
 
@@ -16,7 +16,7 @@ Every players' step count resets veryday at 12 AM UTC+0, challenging them to kee
 
 ---
 
-> This repository is monorepo for Superwalk products that relies on [bun workspaces](https://bun.sh/guides/install/workspaces) and [Turborepo](https://turbo.build/repo/docs). It was bootstrapped using Turborepo CLI.
+> This repository is a hub for Superwalk products.
 
 You will find the following workspaces :
 
@@ -38,58 +38,13 @@ Install dependencies with `bun install`.
 
 > Make sure to read `apps/expo-android/README.md` for setup instructions first !
 
-- Run `bun run android:start` to launch `@superwalk/expo-android` (Android app) on your device (if you're using a physical device, make sure to connect it to your computer via USB and activate debug mode)
+- Run `cd apps/expo-android && bun run start` to launch `@superwalk/expo-android` (Android app) on your device (if you're using a physical device, make sure to connect it to your computer via USB and activate debug mode)
 
 ## Smart contracts and ABIs
 
-## Monorepo and development tasks
+## Backend
 
-### How to...
+> Make sure to read `apps/api/README.md` for setup instructions first !
 
-1. Add dependency to a workspace :
-   `cd` to the workspace and run `bun add <dependency name>`. Bun will detect that you are in a workspace and hoist the dependency as needed.
-
-Example :
-
-```bashrc
-# add `tamagui` to the expo-android workspace
-
-cd apps/expo-android && bun add tamagui
-```
-
-2. Launch a script in all workspaces where this script is defined: `turbo run <script name>`
-
-Examples :
-
-```bashrc
-# run the `dev` script for all workspaces that have a `dev` script defined
-turbo run dev
-```
-
-```bashrc
-#  run the `build` script for all workspaces that have a `dev` script defined
-turbo run build
-```
-
-3. Launch a script in specific workspaces only: `turbo run <task name> -F <workspaces>`
-
-Examples :
-
-```bashrc
-# only run the `dev` script of the @superwalk/webapp workspace
-turbo run dev -F @superwalk/webapp
-```
-
-```bashrc
-# only run the `build` script of the @superwalk/expo-android workspace
-turbo run build -F @superwalk/expo-android
-```
-
-4. Format code : simply use `bun run format`
-
----
-
-## Recommended resources
-
-- [Turborepo examples](https://github.com/vercel/turbo/tree/main/examples)
-- [Turborepo monorepo handbook](https://turbo.build/repo/docs/handbook/dev)
+- Run `cd apps/api && bun run dev` to launch `@superwalk/api` (backend that includes authentication & API routes).
+Yu should be able to access it at `localhost:3000` or `<your ip address>:3000`
