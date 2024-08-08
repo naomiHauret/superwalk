@@ -9,7 +9,6 @@ Smart contracts for Superwalk, a turn-based game that uses the players' real wor
 - **Corruption as a gameplay mechanic**: players can cancel out the attack of another player by bribing them via a simple ERC20 transfer from the briber to the bribee, with the bribe being proportional to the briber's step count (the higher the steps, the higher the bribe will be) ;
 - **Weighted randomness**: the smart contract integrates [Pyth Network Entropy](https://docs.pyth.network/entropy) to ensure fair randomness for item picking and action outcomes, insuring that even though some outcomes are more likely to occur, the RNG can still change the game ;
 
-
 ## Gameplay
 
 ### Overview
@@ -57,7 +56,7 @@ The contract emits several events to track its state and interactions:
 
 ---
 
-> This project was bootstrapped using `thirdweb create contract`. Read more on the [Thirdweb documentation](https://portal.thirdweb.com/contracts/build/get-started).
+> This project was bootstrapped using `thirdweb create contract`. Read more on [Thirdweb documentation](https://portal.thirdweb.com/contracts/build/get-started).
 
 ## Getting Started
 
@@ -66,10 +65,7 @@ Create a project using this example:
 ```bash
 npx thirdweb create --contract --template hardhat-javascript-starter
 ```
-
-You can start editing the page by modifying `contracts/Contract.sol`.
-
-To add functionality to your contracts, you can use the `@thirdweb-dev/contracts` package which provides base contracts and extensions to inherit. The package is already installed with this project. Head to our [Contracts Extensions Docs](https://portal.thirdweb.com/contractkit) to learn more.
+To add functionality to your contracts, you can use the `@thirdweb-dev/contracts` package which provides base contracts and extensions to inherit. The package is already installed with this project. Head to Thirdweb [Contracts Extensions Docs](https://portal.thirdweb.com/contractkit) to learn more.
 
 ## Building the project
 
@@ -85,7 +81,7 @@ to compile your contracts. This will also detect the [Contracts Extensions Docs]
 
 ## Deploying Contracts
 
-When you're ready to deploy your contracts, just run one of the following command to deploy you're contracts:
+When you're ready to deploy your contracts, just run one of the following command to deploy your contracts:
 
 ```bash
 npm run deploy
@@ -105,4 +101,4 @@ yarn release
 
 ## Join our Discord!
 
-For any questions, suggestions, join our discord at [https://discord.gg/thirdweb](https://discord.gg/thirdweb).
+For any questions, suggestions, join Thirdweb discord at [https://discord.gg/thirdweb](https://discord.gg/thirdweb).
