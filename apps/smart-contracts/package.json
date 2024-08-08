@@ -10,6 +10,7 @@
     "hardhat": "^2.13.0"
   },
   "dependencies": {
+    "@pythnetwork/entropy-sdk-solidity": "^1.5.0",
     "@thirdweb-dev/contracts": "^3.8.0",
     "zksync-web3": "^0.14.3"
   }
