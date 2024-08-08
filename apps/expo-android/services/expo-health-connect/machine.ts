@@ -1,3 +1,18 @@
+/**
+ * Code below is sadly not going to be used for the following reason :
+ * Although HealthConnect includes a way to filter out manually added data in its documentation,
+ * currently all records added to HealthConnect return "UNKNOWN" as their recording method, even when the record was added manually
+ * This seems to be bug that was not fixed yet
+ * @see - https://support.google.com/android/thread/267781075/health-connect-reading-data-showing-recording-method-of-all-records-as-unknown?hl=en
+ * @see - https://github.com/matinzd/react-native-health-connect/issues/51#issuecomment-2231091383
+ *
+ * We could manually filter by app source, but it would end up making the step tracking feature more complicated to implement and not accurate anyway (since the pedometer can't run as a background task in android)
+ * So instead, we'll just _painfully_ track by hand
+ * This is far from being ideal, as expo-sensor Pedometer does not support background fetch
+ * and the Android version can't fetch activity between 2 given timestamp
+ * which means the app needs to be running all the time.
+ * Regardless, enjoy this _beautiful_ state machine !
+ */
 import { assign, fromPromise, setup } from 'xstate'
 import {
   getGrantedPermissions,
@@ -126,7 +141,6 @@ const machineHealthConnectSdk = setup({
     context: {} as {
       initialized: boolean
       sdkAvailabilityStatus: number
-      canWriteSteps: boolean
       canReadSteps: boolean
     },
   },
@@ -139,11 +153,11 @@ const machineHealthConnectSdk = setup({
     [ActorsHealthConnectSdk.showingExternalScreenSettings]: openExternalScreenSettings,
   },
 }).createMachine({
+  id: 'healthconnect-sdk-sync',
   initial: StatesHealthConnectSdk.sdkNotInitialized,
   context: {
     initialized: false,
     sdkAvailabilityStatus: SdkAvailabilityStatus.SDK_UNAVAILABLE,
-    canWriteSteps: false,
     canReadSteps: false,
   },
 
@@ -244,24 +258,33 @@ const machineHealthConnectSdk = setup({
           {
             // Case 1 - all permissions are granted (read steps & write steps)
             guard: (context: {
-              event: { output: Array<{ accessType: 'read' | 'write'; recordType: string }> }
+              event: {
+                output: Array<{
+                  accessType: 'read' | 'write'
+                  recordType: string
+                }>
+              }
             }) =>
               context.event.output.filter((permission) => permission.recordType === 'Steps')
-                .length === 2,
+                .length >= 1,
             // Update the context slice
             actions: assign({
               canReadSteps: ({ event }) => true,
-              canWriteSteps: ({ event }) => true,
             }),
             target: StatesHealthConnectSdk.synced,
           },
           {
             // Case 2 - partial permissions granted
             guard: (context: {
-              event: { output: Array<{ accessType: 'read' | 'write'; recordType: string }> }
+              event: {
+                output: Array<{
+                  accessType: 'read' | 'write'
+                  recordType: string
+                }>
+              }
             }) =>
               context.event.output.filter((permission) => permission.recordType === 'Steps')
-                .length === 1,
+                .length < 1,
             // Update the context slice
             actions: assign({
               canReadSteps: ({ event }) =>
@@ -269,25 +292,24 @@ const machineHealthConnectSdk = setup({
                   (permission: Permission) =>
                     permission.recordType === 'Steps' && permission.accessType === 'read',
                 ) !== -1,
-              canWriteSteps: ({ event }) =>
-                event.output.findIndex(
-                  (permission: Permission) =>
-                    permission.recordType === 'Steps' && permission.accessType === 'write',
-                ) !== -1,
             }),
             target: StatesHealthConnectSdk.notSynced,
           },
           {
             // Case 3 - no permissions granted
             guard: (context: {
-              event: { output: Array<{ accessType: 'read' | 'write'; recordType: string }> }
+              event: {
+                output: Array<{
+                  accessType: 'read' | 'write'
+                  recordType: string
+                }>
+              }
             }) =>
               context.event.output.filter((permission) => permission.recordType === 'Steps')
                 .length === 0,
             // Update the context slice
             actions: assign({
               canReadSteps: ({ event }) => false,
-              canWriteSteps: ({ event }) => false,
             }),
             target: StatesHealthConnectSdk.notSynced,
           },
@@ -312,21 +334,30 @@ const machineHealthConnectSdk = setup({
           {
             // Case 1 - all requested permissions granted (read steps & write steps)
             guard: (context: {
-              event: { output: Array<{ accessType: 'read' | 'write'; recordType: string }> }
+              event: {
+                output: Array<{
+                  accessType: 'read' | 'write'
+                  recordType: string
+                }>
+              }
             }) =>
               context.event.output.filter((permission) => permission.recordType === 'Steps')
                 .length === 2,
             // Update the context slice
             actions: assign({
               canReadSteps: ({ event }) => true,
-              canWriteSteps: ({ event }) => true,
             }),
             target: StatesHealthConnectSdk.synced,
           },
           {
             // Case 2 - request permissions partially granted (read steps OR write steps)
             guard: (context: {
-              event: { output: Array<{ accessType: 'read' | 'write'; recordType: string }> }
+              event: {
+                output: Array<{
+                  accessType: 'read' | 'write'
+                  recordType: string
+                }>
+              }
             }) =>
               context.event.output.filter((permission) => permission.recordType === 'Steps')
                 .length === 1,
@@ -337,25 +368,24 @@ const machineHealthConnectSdk = setup({
                   (permission: Permission) =>
                     permission.recordType === 'Steps' && permission.accessType === 'read',
                 ) !== -1,
-              canWriteSteps: ({ event }) =>
-                event.output.findIndex(
-                  (permission: Permission) =>
-                    permission.recordType === 'Steps' && permission.accessType === 'write',
-                ) !== -1,
             }),
             target: StatesHealthConnectSdk.notSynced,
           },
           {
             // Case 3 - request permission not granted
             guard: (context: {
-              event: { output: Array<{ accessType: 'read' | 'write'; recordType: string }> }
+              event: {
+                output: Array<{
+                  accessType: 'read' | 'write'
+                  recordType: string
+                }>
+              }
             }) =>
               context.event.output.filter((permission) => permission.recordType === 'Steps')
                 .length === 0,
             // Update the context slice
             actions: assign({
               canReadSteps: ({ event }) => false,
-              canWriteSteps: ({ event }) => false,
             }),
             target: StatesHealthConnectSdk.notSynced,
           },
