@@ -2,11 +2,18 @@
 
 Smart contracts for Superwalk, a turn-based game that uses the players' real world step count to influence the competition.
 
+- `Superwalk.sol` : Logic running the game and its mechanics.
+
+Deployed to [Base Sepolia](https://base-sepolia.blockscout.com/address/0x67E226A3D8CC91A1eB9AC7006dc1fCcF66f58DeD) ;
+
 ## Features
 
 - **On-chain track records**: from the moment they join, the actions of every players are recorded in the blockchain, ensuring complete traceability from one hand, and an easy access to the leaderboard from another ;
+
 - **Turn-based gameplay**: The game operates in turns, with specific actions and events occurring within defined time windows.
+
 - **Corruption as a gameplay mechanic**: players can cancel out the attack of another player by bribing them via a simple ERC20 transfer from the briber to the bribee, with the bribe being proportional to the briber's step count (the higher the steps, the higher the bribe will be) ;
+
 - **Weighted randomness**: the smart contract integrates [Pyth Network Entropy](https://docs.pyth.network/entropy) to ensure fair randomness for item picking and action outcomes, insuring that even though some outcomes are more likely to occur, the RNG can still change the game ;
 
 ## Gameplay
@@ -31,6 +38,8 @@ During the first 20 minutes of each turn, players can decide to either use of th
 
 ## Functions Overview
 
+### Gameplay
+
 - `createGameItemType`: Creates a new game item that players can use.
 - `joinCompetition`: Allows a player to join the competition.
 - `pickItem`: Allows a player to pick a random item at the beginning of a turn.
@@ -38,6 +47,11 @@ During the first 20 minutes of each turn, players can decide to either use of th
 - `reportSteps`: Updates a player's step count.
 - `endTurn`: Advances the game to the next turn.
 - `reportScore`: Updates a player's score.
+
+### Admin
+
+- `declareGameMaster`: grant the GAME MASTER role to a given wallet, allow it to perform certains actions
+- `revokeGameMaster`: revoke the GAME MASTER role for a given wallet
 
 ## Events
 
@@ -65,6 +79,7 @@ Create a project using this example:
 ```bash
 npx thirdweb create --contract --template hardhat-javascript-starter
 ```
+
 To add functionality to your contracts, you can use the `@thirdweb-dev/contracts` package which provides base contracts and extensions to inherit. The package is already installed with this project. Head to Thirdweb [Contracts Extensions Docs](https://portal.thirdweb.com/contractkit) to learn more.
 
 ## Building the project
