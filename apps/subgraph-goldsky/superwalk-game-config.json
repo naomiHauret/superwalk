@@ -1,0 +1,18 @@
+{
+    "version": "1",
+    "name": "superwalk",
+    "abis": {
+        "game": {
+            "path": "./abis/Superwalk.json"
+        }
+    },
+    "chains": ["base-sepolia"],
+    "instances": [
+        {
+            "abi": "game",
+            "address": "0x8808B527848BA6a2C5401C3cD767783A2D1704A5",
+            "chain": "base-sepolia",
+            "startBlock": 13755736
+        }
+    ]
+}
