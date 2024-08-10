@@ -1,6 +1,7 @@
 import { Text } from '@/components/ui/text'
 import { H1 } from '@/components/ui/typography'
 import {
+  availableChains,
   client,
   doLogin,
   doLogout,
@@ -35,6 +36,7 @@ const ScreenStart: FC = () => {
         theme="light"
         client={client}
         wallets={wallets}
+        chains={availableChains}
       />
     </ScrollView>
   )

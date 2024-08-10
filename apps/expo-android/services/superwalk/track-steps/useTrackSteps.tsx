@@ -4,10 +4,12 @@ import { machineTrackSteps as machine, EventsTrackSteps } from './machine'
 import { createContext, useContext, type FC } from 'react'
 import { Pedometer } from 'expo-sensors'
 import { useActiveAccount } from 'thirdweb/react'
+import { useAccountPlayer } from '../player'
 // Key to identify our query
 const KEY_START_TRACKER = 'start-tracker'
 
 function useProviderValue() {
+  const { isAccountRegisteredAsPlayer } = useAccountPlayer()
   const playerAccount = useActiveAccount()
   const machineTrackSteps = useMachine(machine)
   const [state, send] = machineTrackSteps
@@ -22,6 +24,7 @@ function useProviderValue() {
       return subscribe
     },
     enabled:
+      isAccountRegisteredAsPlayer === true &&
       !!playerAccount?.address &&
       state.context.canAccessStepTracker &&
       state.context.tracking === false,

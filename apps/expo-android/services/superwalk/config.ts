@@ -1,1 +1,2 @@
 export const API_URL = process.env.EXPO_PUBLIC_API_URL!
+export const SUBGRAPH_ENDPOINT_URL = process.env.EXPO_PUBLIC_ENDPOINT_SUBGRAPH_SUPERWALK_URL!

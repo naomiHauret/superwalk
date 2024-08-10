@@ -1,5 +1,5 @@
-import { createThirdwebClient } from 'thirdweb'
-import { baseSepolia } from 'thirdweb/chains'
+import { createThirdwebClient, defineChain } from 'thirdweb'
+import { baseSepolia, optimismSepolia } from 'thirdweb/chains'
 import { createWallet, inAppWallet } from 'thirdweb/wallets'
 import { API_URL } from '../superwalk'
 import { type LoginPayload } from 'thirdweb/dist/types/auth/core/types'
@@ -24,9 +24,65 @@ const client = createThirdwebClient({
 })
 
 /**
+ * Chains on which the user can play
+ */
+
+// Metal L2 testnet https://docs.metall2.com/chain/networks
+// Entropy is not available on this chain, but we can use it for players bets
+const metalL2Testnet = defineChain({
+  id: 1740,
+  name: 'Metal L2 Testnet',
+  rpc: 'https://testnet.rpc.metall2.com/',
+  nativeCurrency: { name: 'Sepolia Ether', symbol: 'ETH', decimals: 18 },
+  blockExplorers: [
+    {
+      name: 'Metal L2 Testnet explorer',
+      url: 'https://testnet.explorer.metall2.com/',
+      apiUrl: 'https://testnet.explorer.metall2.com/api',
+    },
+  ],
+  testnet: true,
+})
+
+// Celo Dango L2 testnet https://docs.celo.org/cel2#getting-started-with-dango
+// Entropy is not available on this chain, but we can use it for players bets
+const celoL2DangoTestnet = defineChain({
+  id: 44787,
+  name: 'Cel2 Dango Testnet',
+  rpc: 'https://forno.dango.celo-testnet.org/',
+  nativeCurrency: { name: 'CELO', symbol: 'CELO', decimals: 18 },
+  blockExplorers: [
+    {
+      name: 'Metal L2 Testnet explorer',
+      url: 'https://celo-dango.blockscout.com/',
+      apiUrl: 'https://celo-dango.blockscout.com/api',
+    },
+  ],
+  testnet: true,
+})
+
+/**
+ * Chains available in app
+ */
+const availableChains = [
+  baseSepolia,
+  optimismSepolia,
+  metalL2Testnet, // Sidenote : entropy is not available on that chain yet
+  celoL2DangoTestnet, // Sidenote : entropy is not available on that chain yet
+]
+
+// Mapping to make accessing chains definition easier
+const mappingChainIdToChainDefinition = {
+  [baseSepolia.id]: baseSepolia,
+  [optimismSepolia.id]: optimismSepolia,
+  [metalL2Testnet.id]: metalL2Testnet,
+  [celoL2DangoTestnet.id]: celoL2DangoTestnet,
+}
+
+/**
  * Default chain users will be connected to
  */
-const chain = baseSepolia
+const chain = availableChains[0]
 
 /**
  * Supported wallets
@@ -54,7 +110,7 @@ const wallets = [
 /**
  * Redirects the user to "game" screen when they sign in
  */
-function onConnect() {
+async function onConnect() {
   router.navigate('/game')
 }
 
@@ -123,7 +179,9 @@ async function doLogout(): Promise<void> {
 export {
   client,
   chain,
+  availableChains,
   wallets,
+  mappingChainIdToChainDefinition,
   getPayloadLogin,
   isLoggedIn,
   doLogin,
