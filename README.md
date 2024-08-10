@@ -42,6 +42,10 @@ Install dependencies with `bun install`.
 
 ## Smart contracts and ABIs
 
+> Make sure to read `apps/smart-contracts/README.md` for setup instructions first !
+
+- Run `bun run build` to compile the contracts (must be ran whenever a change occurs)
+
 ## Backend
 
 > Make sure to read `apps/api/README.md` for setup instructions first !

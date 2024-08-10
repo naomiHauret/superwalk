@@ -5,6 +5,12 @@ import { supabase } from './libs/supabase'
 import { thirdwebClient } from './libs/thirdweb'
 import { cors } from '@elysiajs/cors'
 import { jwtDecode } from 'jwt-decode'
+import { baseSepolia } from 'thirdweb/chains'
+import {
+  batchUpdateAllPlayersStepsCount,
+  StepCountReportSource,
+  RecordLastStepsCount,
+} from './libs/superwalk'
 
 /**
  * Authentication via Thirdweb + SIWE
@@ -62,6 +68,7 @@ const app = new Elysia()
   .post(
     '/_auth/login',
     async ({ body, cookie }) => {
+      //@ts-ignore
       const verifiedPayload = await thirdwebAuth.verifyPayload(body)
       if (verifiedPayload.valid) {
         const jwt = await thirdwebAuth.generateJWT({
@@ -107,6 +114,31 @@ const app = new Elysia()
     },
   )
   // App routes
+  // Game master (smart wallet controlled)
+  .put(
+    '/api/scores',
+    // Batch update all players steps count
+    async ({ body }) => {},
+  )
+  .put(
+    '/api/steps',
+    // Batch update all players score onchain
+    async () => {
+      // uses a view function that returns the most steps reports of each player today
+      const { data, error } = await supabase
+        .from('most_recent_steps_per_player_today')
+        .select('player,updated_count')
+      if ((data?.length ?? 0) > 0) {
+        const tx = await batchUpdateAllPlayersStepsCount(
+          data as Array<RecordLastStepsCount>,
+          baseSepolia.id,
+        )
+        console.log('tx', tx)
+      } else {
+        console.log('no update to perform')
+      }
+    },
+  )
   // Player
   .guard(
     {
@@ -128,8 +160,9 @@ const app = new Elysia()
         .post(
           '/api/player/steps',
           async ({ body: { count }, cookie, headers }) => {
-            console.log('Synchronizing at ', new Date())
+            //@ts-ignore
             const decodedJwt = jwtDecode(cookie.jwt.value)
+            //@ts-ignore
             const player = decodedJwt.sub
             const { data, error } = await supabase
               .from('StepsReports')

@@ -4,7 +4,9 @@ Smart contracts for Superwalk, a turn-based game that uses the players' real wor
 
 - `Superwalk.sol` : Logic running the game and its mechanics.
 
-Deployed to [Base Sepolia](https://base-sepolia.blockscout.com/address/0x67E226A3D8CC91A1eB9AC7006dc1fCcF66f58DeD) ;
+Deployed to [Base Sepolia](https://base-sepolia.blockscout.com/address/0x8808B527848BA6a2C5401C3cD767783A2D1704A5) ;
+
+Thirdweb based Account factory was also deployed to [Base Sepolia](https://base-sepolia.blockscout.com/address/0x22e1b4C215ad327BfcB6383A132FC02fb2fCAEf6).
 
 ## Features
 
@@ -60,13 +62,13 @@ The contract emits several events to track its state and interactions:
 - `GameItemCreated`: Emitted when a new game item is created.
 - `PlayerJoined`: Emitted when a player joins the competition.
 - `StepsCountReported`: Emitted when a player's steps are reported.
-- `PerformActionRequested`: Emitted when a player requests to perform an action.
+- `IntentAction`: Emitted when a player requests to perform an action.
+- `BribeSent`: Emitted when a bribe is sent from one player to another.
+- `ItemUsed`: Emitted when a player uses an item.
+- `IntentPickItem`: Emitted when a player requests to pick an item.
+- `ItemPicked`: Emitted when a player successfully picks a random item.
 - `ScoreUpdated`: Emitted when a player's score is updated.
 - `TurnEnded`: Emitted when a turn ends.
-- `BribeSent`: Emitted when a bribe is sent from one player to another.
-- `ItemPicked`: Emitted when a player successfully picks a random item.
-- `ItemUsed`: Emitted when a player uses an item.
-- `ItemPickRequested`: Emitted when a player requests to pick an item.
 
 ---
 

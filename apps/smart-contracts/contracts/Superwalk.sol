@@ -106,6 +106,7 @@ contract SuperwalkGame is IEntropyConsumer, AccessControl {
         uint256 _maxInventorySize
     );
     event GameItemCreated(
+        uint256 indexed _itemId,
         string _name,
         EffectType _effectType,
         uint256 _effectValue,
@@ -115,28 +116,38 @@ contract SuperwalkGame is IEntropyConsumer, AccessControl {
     );
     event PlayerJoined(address indexed _player);
     event StepsCountReported(address indexed _player, uint256 _steps);
-    event PerformActionRequested(
+    event IntentPickItem(address indexed _player, uint64 _sequenceNumber);
+    event ItemPicked(
+        address indexed _player,
+        uint256 _itemId,
+        uint256 _turnNumber
+    );
+    event ScoreUpdated(
+        address indexed _player,
+        uint256 _score,
+        uint256 _turnNumber
+    );
+    event TurnEnded(uint256 _turnNumber);
+    event IntentAction(
         address indexed _player,
         ActionType _actionType,
         uint256 _itemId,
         address _targetPlayer
     );
-    event ScoreUpdated(address indexed _player, uint256 _score);
-    event TurnEnded(uint256 _turnNumber);
     event BribeSent(
         address indexed _fromPlayer,
         address indexed _toPlayer,
-        uint256 _amount
+        uint256 _amount,
+        uint256 _turnNumber
     );
-    event ItemPicked(address indexed _player, uint256 _itemId);
     event ItemUsed(
         address indexed _player,
+        address indexed _targetPlayer,
         uint256 _itemId,
         uint256 _turnNumber,
         bool _success
     );
     event Blocked(address indexed _player, uint256 _turnNumber, bool _success);
-    event ItemPickRequested(address indexed _player, uint64 _sequenceNumber);
 
     // -- Modifiers --
     /**
@@ -240,6 +251,7 @@ contract SuperwalkGame is IEntropyConsumer, AccessControl {
             cooldownValue
         );
         emit GameItemCreated(
+            itemsTypesCount,
             name,
             effectType,
             effectValue,
@@ -300,7 +312,7 @@ contract SuperwalkGame is IEntropyConsumer, AccessControl {
             player: msg.sender
         });
 
-        emit ItemPickRequested(msg.sender, sequenceNumber);
+        emit IntentPickItem(msg.sender, sequenceNumber);
     }
 
     /**
@@ -332,6 +344,7 @@ contract SuperwalkGame is IEntropyConsumer, AccessControl {
         bytes32 userRandomNumber
     ) external payable onlyPlayer withinActionWindow {
         Player storage player = players[msg.sender];
+
         require(
             player.cooldownEnd <= turnNumber,
             "You're still in cooldown period."
@@ -357,7 +370,7 @@ contract SuperwalkGame is IEntropyConsumer, AccessControl {
                 targetPlayer,
                 bribeAmount
             );
-            emit BribeSent(msg.sender, targetPlayer, bribeAmount);
+            emit BribeSent(msg.sender, targetPlayer, bribeAmount, turnNumber);
             // For now, bribes are always successful
             // However, to finance the fees and potentially create a reward pool for the top 3 players, we could make bribing a 55% success rate action, and give 75% of the bribe to the backend wallet/reward pool if the action failed
         } else {
@@ -377,12 +390,7 @@ contract SuperwalkGame is IEntropyConsumer, AccessControl {
                 targetPlayer: targetPlayer
             });
 
-            emit PerformActionRequested(
-                msg.sender,
-                actionType,
-                itemId,
-                targetPlayer
-            );
+            emit IntentAction(msg.sender, actionType, itemId, targetPlayer);
         }
     }
 
@@ -406,7 +414,7 @@ contract SuperwalkGame is IEntropyConsumer, AccessControl {
         Player storage player = players[_player];
         player.score = _score; // Update player score with value computed off-chain
         player.lastSteps = player.currentSteps;
-        emit ScoreUpdated(_player, _score); // Emit an event when a player's score is updated
+        emit ScoreUpdated(_player, _score, turnNumber); // Emit an event when a player's score is updated
     }
 
     /**
@@ -449,6 +457,7 @@ contract SuperwalkGame is IEntropyConsumer, AccessControl {
 
                 emit ItemUsed(
                     request.player,
+                    request.targetPlayer,
                     request.itemId,
                     turnNumber,
                     success
@@ -473,8 +482,8 @@ contract SuperwalkGame is IEntropyConsumer, AccessControl {
             require(itemsTypesCount > 0, 'No game items created'); // Ensure there are items to pick from
             uint256 randomItemId = (uint256(randomNumber) % itemsTypesCount) +
                 1; // Select a random item ID
-            _addItemPlayerToInventory(player, randomItemId); // add items to player's inventory
-            emit ItemPicked(request.player, randomItemId);
+            _addItemToPlayerInventory(player, randomItemId); // add items to player's inventory
+            emit ItemPicked(request.player, randomItemId, turnNumber);
             delete pendingItemPicks[sequenceNumber];
         }
     }
@@ -484,7 +493,7 @@ contract SuperwalkGame is IEntropyConsumer, AccessControl {
      * @param player The player to whom the item is being added.
      * @param itemId The ID of the item being added.
      */
-    function _addItemPlayerToInventory(
+    function _addItemToPlayerInventory(
         Player storage player,
         uint256 itemId
     ) internal {
@@ -552,5 +561,7 @@ contract SuperwalkGame is IEntropyConsumer, AccessControl {
             inventoryItemIds[i] = itemId;
             inventoryQuantities[i] = player.inventory[itemId].quantity;
         }
+
+        return (inventoryItemIds, inventoryQuantities); // Add return statement
     }
 }
