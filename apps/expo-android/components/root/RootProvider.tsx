@@ -2,7 +2,12 @@ import { type FC } from 'react'
 import { ThirdwebProvider } from 'thirdweb/react'
 import { Theme, ThemeProvider } from '@react-navigation/native'
 import { QueryClientProvider } from '@tanstack/react-query'
-import { queryClient, ProviderTrackStepsMachine, ProviderAccountPlayer } from '@/services'
+import {
+  queryClient,
+  ProviderTrackStepsMachine,
+  ProviderCurrentTurn,
+  ProviderAccountPlayer,
+} from '@/services'
 import { NAV_THEME } from '@/lib/constants'
 
 const LIGHT_THEME: Theme = {
@@ -23,9 +28,11 @@ const RootProvider: FC<RootProviderProps> = (props) => {
     <QueryClientProvider client={queryClient}>
       <ThirdwebProvider>
         <ThemeProvider value={LIGHT_THEME}>
-          <ProviderAccountPlayer>
-            <ProviderTrackStepsMachine>{props.children}</ProviderTrackStepsMachine>
-          </ProviderAccountPlayer>
+          <ProviderCurrentTurn>
+            <ProviderAccountPlayer>
+              <ProviderTrackStepsMachine>{props.children}</ProviderTrackStepsMachine>
+            </ProviderAccountPlayer>
+          </ProviderCurrentTurn>
         </ThemeProvider>
       </ThirdwebProvider>
     </QueryClientProvider>
