@@ -6,6 +6,7 @@ import 'react-native-reanimated'
 import { StatusBar } from 'expo-status-bar'
 import { AutoConnect } from 'thirdweb/react'
 import { client, wallets } from '@/services/thirdweb'
+import { Theme } from 'tamagui'
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync()
@@ -16,9 +17,11 @@ SplashScreen.preventAutoHideAsync()
 const AppLayout: FC = () => {
   return (
     <RootProvider>
-      <RootNavigator />
-      <StatusBar style="dark" translucent={true} />
-      <AutoConnect wallets={wallets} client={client} />
+      <Theme name="light">
+        <RootNavigator />
+        <StatusBar style="dark" translucent={true} />
+        <AutoConnect wallets={wallets} client={client} />
+      </Theme>
     </RootProvider>
   )
 }

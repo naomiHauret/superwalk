@@ -28,6 +28,7 @@
     "@rn-primitives/slot": "^1.0.3",
     "@rn-primitives/types": "^1.0.3",
     "@rn-primitives/utils": "^1.0.3",
+    "@tamagui/config": "^1.108.3",
     "@tanstack/react-query": "^5.51.21",
     "@thirdweb-dev/react-native-adapter": "^1.2.0",
     "@xstate/react": "^4.1.1",
@@ -72,6 +73,7 @@
     "react-native-web": "~0.19.12",
     "tailwind-merge": "^2.4.0",
     "tailwindcss": "^3.4.7",
+    "tamagui": "^1.108.3",
     "thirdweb": "^5.43.2",
     "xstate": "^5.17.1"
   },

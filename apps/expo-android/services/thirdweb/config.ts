@@ -1,6 +1,6 @@
 import { createThirdwebClient, defineChain } from 'thirdweb'
 import { baseSepolia, optimismSepolia } from 'thirdweb/chains'
-import { createWallet, inAppWallet, type Wallet } from 'thirdweb/wallets'
+import { inAppWallet, type Wallet } from 'thirdweb/wallets'
 import { API_URL } from '../superwalk'
 import { type LoginPayload } from 'thirdweb/dist/types/auth/core/types'
 import { type VerifyLoginPayloadParams } from 'thirdweb/dist/types/auth/core/verify-login-payload'

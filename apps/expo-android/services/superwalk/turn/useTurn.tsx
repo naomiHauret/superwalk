@@ -54,6 +54,10 @@ function useProviderValue() {
         }),
       })
       const data = await response.json()
+      storeCurrentTurn.send({
+        type: 'setCurrentTurn',
+        turn: +data.data?.turnEndeds[0]?.turnNumber ?? 0,
+      })
       return +data.data?.turnEndeds[0]?.turnNumber
     },
   })
