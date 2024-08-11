@@ -1,1 +1,1 @@
-export * from './useClaimItem'
+export * from './useGameItems'

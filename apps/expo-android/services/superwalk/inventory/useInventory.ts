@@ -1,15 +1,33 @@
 import { getCompetitionSmartContract } from '@/services'
-import { useActiveWalletChain, useSendAndConfirmTransaction } from 'thirdweb/react'
+import {
+  useActiveAccount,
+  useActiveWalletChain,
+  useReadContract,
+  useSendAndConfirmTransaction,
+} from 'thirdweb/react'
 import { useMutation } from '@tanstack/react-query'
-import { prepareContractCall, toHex, waitForReceipt } from 'thirdweb'
+import { isAddress, prepareContractCall, toHex, waitForReceipt } from 'thirdweb'
 import { client as thirdwebClient } from '../../thirdweb'
 
 /**
- * Let player claim a random item once per turn
+ * Let current user see & manage their inventory
  */
-function useClaimItem() {
+function useInventory() {
+  const activeUser = useActiveAccount()
   const activeChain = useActiveWalletChain()
   const mutationSendTransaction = useSendAndConfirmTransaction()
+
+  const queryPlayerInventory = useReadContract(
+    {
+      //@ts-ignore
+      contract: getCompetitionSmartContract(activeChain?.id!!),
+      method: 'function getInventory()',
+      params: [],
+    },
+    {
+      enabled: isAddress(activeUser?.address!!),
+    },
+  )
 
   /**
    * Cast a claim random item intent transaction
@@ -29,6 +47,7 @@ function useClaimItem() {
    * Send claim item transaction
    */
   async function claimItem() {
+    // Sadly gas fees are so high, even after multiple top off, I can't get enough gas to cover it :(
     const transaction = await _transactionClaimItem()
     const result = await mutationSendTransaction.mutateAsync(transaction)
     return result
@@ -64,7 +83,8 @@ function useClaimItem() {
 
   return {
     mutationClaimItem,
+    queryPlayerInventory,
   }
 }
 
-export { useClaimItem }
+export { useInventory }

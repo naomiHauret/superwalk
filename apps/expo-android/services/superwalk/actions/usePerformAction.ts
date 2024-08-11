@@ -30,6 +30,7 @@ function useCastTurnAction() {
     itemId: number
     targetPlayer: `0x${string}`
   }) {
+    // Sadly gas fees are so high, even after multiple top off, I can't get enough gas to cover it :(
     const randomBytes = crypto.getRandomValues(new Uint8Array(32))
     const randomHexValue = toHex(randomBytes)
     return await prepareContractCall({
