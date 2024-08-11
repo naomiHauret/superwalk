@@ -133,7 +133,7 @@ const app = new Elysia()
    * (although it really should)
    */
   .post('/api/steps-report', async ({ body, headers }) => {
-    console.log("reporting steps onchain ...")
+    console.log('reporting steps onchain ...')
     // uses a view function that returns the last (most recent) steps report of each player today
     const { data, error } = await supabase
       .from('most_recent_steps_per_player_today')
@@ -151,23 +151,23 @@ const app = new Elysia()
   /**
    * Record scores & Advance to next turn (triggered via Supabase cron job)
    */
-  .post(
-    '/api/turn',
-    async ({ body, headers }) => {
-      // Get current turn
-      const turn = await getCurrentTurn()
-      // Get list of actions that happened during this turn
-      const data = await getTurnActions(turn)
-      const playerToTurnDataMapping = calculateScores(data)
+  .post('/api/turn', async ({ body, headers }) => {
+    // Get current turn
+    const turn = await getCurrentTurn()
+    // Get list of actions that happened during this turn
+    const data = await getTurnActions(turn)
+    const playerToTurnDataMapping = calculateScores(data)
 
-      // Calculate scores & batch update scores
-      if (Object.keys(playerToTurnDataMapping)?.length > 0) {
-        const txScoresBatch = await batchUpdateAllPlayersScores(playerToTurnDataMapping, baseSepolia.id)
-      }
-  
-      const txEndTurn = await endTurn(baseSepolia.id)
+    // Calculate scores & batch update scores
+    if (Object.keys(playerToTurnDataMapping)?.length > 0) {
+      const txScoresBatch = await batchUpdateAllPlayersScores(
+        playerToTurnDataMapping,
+        baseSepolia.id,
+      )
     }
-  )
+
+    const txEndTurn = await endTurn(baseSepolia.id)
+  })
   .guard(
     {
       // Ensure only connected players can log their steps

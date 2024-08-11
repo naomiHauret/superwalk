@@ -236,13 +236,12 @@ async function batchUpdateAllPlayersScores(
   chainId: number,
 ) {
   try {
-    console.log("data", data)
     const contract = getCompetitionSmartContract(chainId)
     const writeOperations = Object.keys(data).map((player) => {
       return prepareContractCall({
         contract,
-        method: 'function reportSteps(address _player,uint256 updatedStepsCount)',
-        params: [player, +data[player].finalScore],
+        method: 'function reportScore(address _player,uint256 updatedStepsCount)',
+        params: [player, BigInt(data[player].finalScore)],
       })
     })
     const transactions = writeOperations
