@@ -32,7 +32,7 @@ async function getTurnActions(turnNumber: number) {
 
   const query = `
     query TurnActions($turn: BigInt, $timestamp: BigInt) {
-      stepsCountReporteds(where: { timestamp_gte: $timestamp }) {
+      stepsCountReporteds(where: { timestamp__gte: $timestamp }) {
         turnNumber
         player
         steps

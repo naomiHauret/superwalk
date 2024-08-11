@@ -12,6 +12,7 @@ import {
   RecordLastStepsCount,
   endTurn,
   batchUpdateAllPlayersScores,
+  calculateScores,
 } from './libs/superwalk'
 import { getCurrentTurn, getTurnActions } from './libs/subgraph'
 
@@ -48,6 +49,7 @@ const app = new Elysia()
   .onError(({ code, error }) => {
     return new Response(error.toString())
   })
+
   /**
    * Thirdweb auth SIWE challenge generation
    */
@@ -126,25 +128,12 @@ const app = new Elysia()
     },
   )
   /**
-   * Batch update all players scores onchain (triggered via Supabase cron job)
-   * This route should be protected by a JWT or headers or something but it's not the case here
-   * (although it really should)
-   */
-  .post('/api/scores-report', async ({ body, headers }) => {
-    // uses a view function that returns the last (most recent) steps report of each player today
-    const turn = await getCurrentTurn()
-    const playerToTurnDataMapping = await getTurnActions(turn)
-    if (Object.keys(playerToTurnDataMapping)?.length > 0) {
-      const tx = await batchUpdateAllPlayersScores(playerToTurnDataMapping, baseSepolia.id)
-      console.log('tx score update', tx)
-    }
-  })
-  /**
    * Batch update all players steps onchain (triggered via Supabase cron job)
    * This route should be protected by a JWT or headers or something but it's not the case here
    * (although it really should)
    */
   .post('/api/steps-report', async ({ body, headers }) => {
+    console.log("reporting steps onchain ...")
     // uses a view function that returns the last (most recent) steps report of each player today
     const { data, error } = await supabase
       .from('most_recent_steps_per_player_today')
@@ -160,15 +149,24 @@ const app = new Elysia()
     }
   })
   /**
-   * Advance to next turn (triggered via Supabase cron job)
+   * Record scores & Advance to next turn (triggered via Supabase cron job)
    */
   .post(
     '/api/turn',
-    //
     async ({ body, headers }) => {
-      const tx = await endTurn(baseSepolia.id)
-      console.log("tx turn finished", tx)
-    },
+      // Get current turn
+      const turn = await getCurrentTurn()
+      // Get list of actions that happened during this turn
+      const data = await getTurnActions(turn)
+      const playerToTurnDataMapping = calculateScores(data)
+
+      // Calculate scores & batch update scores
+      if (Object.keys(playerToTurnDataMapping)?.length > 0) {
+        const txScoresBatch = await batchUpdateAllPlayersScores(playerToTurnDataMapping, baseSepolia.id)
+      }
+  
+      const txEndTurn = await endTurn(baseSepolia.id)
+    }
   )
   .guard(
     {
