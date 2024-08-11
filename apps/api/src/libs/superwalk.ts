@@ -1,4 +1,10 @@
-import { getContract, prepareContractCall, sendBatchTransaction, waitForReceipt } from 'thirdweb'
+import {
+  getContract,
+  prepareContractCall,
+  sendBatchTransaction,
+  sendTransaction,
+  waitForReceipt,
+} from 'thirdweb'
 import { thirdwebClient } from './thirdweb'
 import { baseSepolia, optimismSepolia } from 'thirdweb/chains'
 import { privateKeyToAccount, smartWallet } from 'thirdweb/wallets'
@@ -22,11 +28,11 @@ function getCompetitionSmartContract(chainId: number) {
   switch (chainId) {
     case baseSepolia.id:
       chain = baseSepolia
-      address = '0x8808B527848BA6a2C5401C3cD767783A2D1704A5'
+      address = '0x716cD40b5C33C261D9318Bf80d5cdF5503Ff320e'
       break
     case optimismSepolia.id:
       chain = optimismSepolia
-      address = '0x8808B527848BA6a2C5401C3cD767783A2D1704A5'
+      address = '0x716cD40b5C33C261D9318Bf80d5cdF5503Ff320e'
       break
   }
   return getContract({
@@ -98,7 +104,7 @@ async function batchUpdateAllPlayersStepsCount(
     })
 
     const txResult = await waitForReceipt(receipt)
-    console.log(txResult)
+    return txResult
   } catch (error) {
     console.error('something went wrong:')
     console.error(error)
@@ -113,29 +119,33 @@ async function batchUpdateAllPlayersStepsCount(
 async function batchUpdateAllPlayersScore(
   actions: Array<{ player: string; successful: boolean }>,
   chainId: number,
-) {
+) {}
+
+/**
+ * Updates the scores of all players based on the different actions during this turn
+ * @param records database records of most recent actions
+ * @param chainId chain on which to perform the update
+ */
+async function endTurn(chainId: number) {
   try {
     const contract = getCompetitionSmartContract(chainId)
-    const writeOperations = records.map((record) => {
-      return prepareContractCall({
-        contract,
-        method: 'function reportSteps(address _player,uint256 updatedStepsCount)',
-        params: [record.player, BigInt(record.updated_count)],
-      })
+    const transaction = await prepareContractCall({
+      contract,
+      method: 'function endTurn()',
+      params: [],
     })
-    const transactions = writeOperations
     const account = await getGameMaster(chainId)
-    const receipt = await sendBatchTransaction({
-      transactions,
+    const receipt = await sendTransaction({
+      transaction,
       account,
     })
 
     const txResult = await waitForReceipt(receipt)
-    console.log(txResult)
+    return txResult
   } catch (error) {
     console.error('something went wrong:')
     console.error(error)
   }
 }
 
-export { StepCountReportSource, batchUpdateAllPlayersStepsCount }
+export { StepCountReportSource, batchUpdateAllPlayersStepsCount, endTurn }

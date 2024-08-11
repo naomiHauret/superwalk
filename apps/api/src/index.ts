@@ -10,6 +10,7 @@ import {
   batchUpdateAllPlayersStepsCount,
   StepCountReportSource,
   RecordLastStepsCount,
+  endTurn,
 } from './libs/superwalk'
 
 /**
@@ -45,8 +46,9 @@ const app = new Elysia()
   .onError(({ code, error }) => {
     return new Response(error.toString())
   })
-  // Authentication via Thirdweb
-  // - SIWE
+  /**
+   * Thirdweb auth SIWE challenge generation
+   */
   .get(
     '/_auth/challenge',
     async ({ query }) => {
@@ -65,6 +67,9 @@ const app = new Elysia()
       }),
     },
   )
+  /**
+   * Thirdweb auth backend login
+   */
   .post(
     '/_auth/login',
     async ({ body, cookie }) => {
@@ -86,7 +91,9 @@ const app = new Elysia()
       type: 'json',
     },
   )
-  // Verify if JWT is valid
+  /**
+   * Thirdweb auth backend JWT validity check
+   */
   .get('/_auth/verify', async ({ cookie }) => {
     const jwt = cookie?.jwt
 
@@ -102,7 +109,9 @@ const app = new Elysia()
 
     return true
   })
-  // Logout
+  /**
+   * Thirdweb auth backend logout
+   */ 
   .post(
     '/_auth/logout',
     ({ cookie }) => {
@@ -113,18 +122,35 @@ const app = new Elysia()
       type: 'json',
     },
   )
-  // App routes
-  // Game master (smart wallet controlled)
-  .put(
-    '/api/scores',
-    // Batch update all players steps count
-    async ({ body }) => {},
+  /**
+   * Batch update all players scores onchain (triggered via Supabase cron job)
+   * This route should be protected by a JWT or headers or something but it's not the case here
+   * (although it really should)
+   */
+  .post(
+    '/api/scores-report',
+    async ({ body, headers }) => {
+      // uses a view function that returns the last (most recent) steps report of each player today
+      const { data, error } = await supabase
+        .from('most_recent_steps_per_player_today')
+        .select('player,updated_count')
+      if ((data?.length ?? 0) > 0) {
+
+
+      } else {
+        console.log('no update to perform')
+      }
+    },
   )
-  .put(
-    '/api/steps',
-    // Batch update all players score onchain
-    async () => {
-      // uses a view function that returns the most steps reports of each player today
+  /**
+   * Batch update all players steps onchain (triggered via Supabase cron job)
+   * This route should be protected by a JWT or headers or something but it's not the case here
+   * (although it really should)
+   */
+  .post(
+    '/api/steps-report',
+    async ({ body, headers }) => {
+      // uses a view function that returns the last (most recent) steps report of each player today
       const { data, error } = await supabase
         .from('most_recent_steps_per_player_today')
         .select('player,updated_count')
@@ -139,7 +165,16 @@ const app = new Elysia()
       }
     },
   )
-  // Player
+  /**
+   * Advance to next turn (triggered via Supabase cron job)
+   */
+  .post(
+    '/api/turn',
+    // 
+    async ({ body, headers }) => {
+      const tx = await endTurn(baseSepolia.id)
+    },
+  )
   .guard(
     {
       // Ensure only connected players can log their steps
@@ -156,8 +191,12 @@ const app = new Elysia()
     },
     (app) =>
       app
-        // Record player's steps in the database
-        .post(
+
+        /**
+         * Record player's steps in the database 
+         * This is called in the background in the app by a finite state machine (not user triggered but still client triggered anyway)
+         */
+          .post(
           '/api/player/steps',
           async ({ body: { count }, cookie, headers }) => {
             //@ts-ignore
