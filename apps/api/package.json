@@ -9,6 +9,7 @@
   "dependencies": {
     "@elysiajs/cors": "^1.1.0",
     "@supabase/supabase-js": "^2.45.1",
+    "date-fns": "^3.6.0",
     "elysia": "latest",
     "jwt-decode": "^4.0.0",
     "thirdweb": "^5.44.0"

@@ -11,7 +11,9 @@ import {
   StepCountReportSource,
   RecordLastStepsCount,
   endTurn,
+  batchUpdateAllPlayersScores,
 } from './libs/superwalk'
+import { getCurrentTurn, getTurnActions } from './libs/subgraph'
 
 /**
  * Authentication via Thirdweb + SIWE
@@ -111,7 +113,8 @@ const app = new Elysia()
   })
   /**
    * Thirdweb auth backend logout
-   */ 
+   */
+
   .post(
     '/_auth/logout',
     ({ cookie }) => {
@@ -127,52 +130,44 @@ const app = new Elysia()
    * This route should be protected by a JWT or headers or something but it's not the case here
    * (although it really should)
    */
-  .post(
-    '/api/scores-report',
-    async ({ body, headers }) => {
-      // uses a view function that returns the last (most recent) steps report of each player today
-      const { data, error } = await supabase
-        .from('most_recent_steps_per_player_today')
-        .select('player,updated_count')
-      if ((data?.length ?? 0) > 0) {
-
-
-      } else {
-        console.log('no update to perform')
-      }
-    },
-  )
+  .post('/api/scores-report', async ({ body, headers }) => {
+    // uses a view function that returns the last (most recent) steps report of each player today
+    const turn = await getCurrentTurn()
+    const playerToTurnDataMapping = await getTurnActions(turn)
+    if (Object.keys(playerToTurnDataMapping)?.length > 0) {
+      const tx = await batchUpdateAllPlayersScores(playerToTurnDataMapping, baseSepolia.id)
+      console.log('tx score update', tx)
+    }
+  })
   /**
    * Batch update all players steps onchain (triggered via Supabase cron job)
    * This route should be protected by a JWT or headers or something but it's not the case here
    * (although it really should)
    */
-  .post(
-    '/api/steps-report',
-    async ({ body, headers }) => {
-      // uses a view function that returns the last (most recent) steps report of each player today
-      const { data, error } = await supabase
-        .from('most_recent_steps_per_player_today')
-        .select('player,updated_count')
-      if ((data?.length ?? 0) > 0) {
-        const tx = await batchUpdateAllPlayersStepsCount(
-          data as Array<RecordLastStepsCount>,
-          baseSepolia.id,
-        )
-        console.log('tx', tx)
-      } else {
-        console.log('no update to perform')
-      }
-    },
-  )
+  .post('/api/steps-report', async ({ body, headers }) => {
+    // uses a view function that returns the last (most recent) steps report of each player today
+    const { data, error } = await supabase
+      .from('most_recent_steps_per_player_today')
+      .select('player,updated_count')
+    if ((data?.length ?? 0) > 0) {
+      const tx = await batchUpdateAllPlayersStepsCount(
+        data as Array<RecordLastStepsCount>,
+        baseSepolia.id,
+      )
+      console.log('tx steps update', tx)
+    } else {
+      console.log('no update to perform')
+    }
+  })
   /**
    * Advance to next turn (triggered via Supabase cron job)
    */
   .post(
     '/api/turn',
-    // 
+    //
     async ({ body, headers }) => {
       const tx = await endTurn(baseSepolia.id)
+      console.log("tx turn finished", tx)
     },
   )
   .guard(
@@ -193,10 +188,10 @@ const app = new Elysia()
       app
 
         /**
-         * Record player's steps in the database 
+         * Record player's steps in the database
          * This is called in the background in the app by a finite state machine (not user triggered but still client triggered anyway)
          */
-          .post(
+        .post(
           '/api/player/steps',
           async ({ body: { count }, cookie, headers }) => {
             //@ts-ignore
@@ -208,7 +203,6 @@ const app = new Elysia()
               .insert([{ player, updated_count: count, source: StepCountReportSource.self }])
               .select()
 
-            console.log('inserted ', data, error)
             return {
               data,
               error,
