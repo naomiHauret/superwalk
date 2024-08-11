@@ -1,6 +1,6 @@
 import { createThirdwebClient, defineChain } from 'thirdweb'
 import { baseSepolia, optimismSepolia } from 'thirdweb/chains'
-import { createWallet, inAppWallet } from 'thirdweb/wallets'
+import { createWallet, inAppWallet, type Wallet } from 'thirdweb/wallets'
 import { API_URL } from '../superwalk'
 import { type LoginPayload } from 'thirdweb/dist/types/auth/core/types'
 import { type VerifyLoginPayloadParams } from 'thirdweb/dist/types/auth/core/verify-login-payload'
@@ -97,20 +97,13 @@ const wallets = [
       sponsorGas: true,
     },
   }),
-  createWallet('com.coinbase.wallet'),
-  createWallet('io.rabby'),
-  createWallet('org.uniswap'),
-  createWallet('com.trustwallet.app'),
-  createWallet('io.zerion.wallet'),
-  createWallet('me.rainbow'),
-  createWallet('io.metamask'),
 ]
 
 // Client-side authentication hooks
 /**
  * Redirects the user to "game" screen when they sign in
  */
-async function onConnect() {
+async function onConnect(wallet: Wallet) {
   router.navigate('/game')
 }
 

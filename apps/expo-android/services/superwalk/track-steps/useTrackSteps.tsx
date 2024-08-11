@@ -19,7 +19,7 @@ function useProviderValue() {
     queryFn: async () => {
       send({ type: EventsTrackSteps.startTracking })
       const subscribe = await Pedometer.watchStepCount((result) => {
-        // send({ type: EventsTrackSteps.updateSteps, updated: result.steps })
+        send({ type: EventsTrackSteps.updateSteps, updated: result.steps })
       })
       return subscribe
     },
@@ -31,7 +31,7 @@ function useProviderValue() {
   })
 
   const mutationRequestPermissionAccess = useMutation({
-    // mutationFn: async () => send({ type: EventsTrackSteps.requestPermission }),
+    mutationFn: async () => send({ type: EventsTrackSteps.requestPermission }),
   })
   return {
     machineTrackSteps,

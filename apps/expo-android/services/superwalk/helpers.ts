@@ -14,11 +14,11 @@ function getCompetitionSmartContract(chainId: number) {
   let address
   switch (chainId) {
     case defaultChain.id:
-      address = '0x8808B527848BA6a2C5401C3cD767783A2D1704A5'
+      address = '0x716cD40b5C33C261D9318Bf80d5cdF5503Ff320e'
       break
     case optimismSepolia.id:
       chain = optimismSepolia
-      address = '0x8808B527848BA6a2C5401C3cD767783A2D1704A5'
+      address = '0x716cD40b5C33C261D9318Bf80d5cdF5503Ff320e'
       break
   }
   return getContract({

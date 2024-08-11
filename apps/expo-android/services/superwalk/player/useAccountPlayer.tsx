@@ -14,6 +14,7 @@ import { client as thirdwebClient } from '../../thirdweb'
 
 /**
  * Store for player account
+ * Help us determine wheter or not the current account called `joinCompetition()`
  */
 const storeIsRegisteredAsPlayer = createStore(
   {
@@ -58,6 +59,7 @@ function useProviderValue() {
   const queryIsAccountRegisteredAsPlayer = useQuery({
     queryKey: [KEY_IS_ACCOUNT_REGISTERED_AS_PLAYER, playerAccount?.address, activeChain],
     queryFn: async () => {
+      console.log(SUBGRAPH_ENDPOINT_URL)
       const response = await fetch(SUBGRAPH_ENDPOINT_URL, {
         method: 'POST',
         headers: {
@@ -72,14 +74,13 @@ function useProviderValue() {
             }
         `,
           variables: {
-            address: playerAccount?.address,
+            address: playerAccount?.address.toLowerCase(),
           },
         }),
       })
       const result = await response.json()
-      const didJoin = result?.data?.playerJoineds?.includes(playerAccount?.address) ?? false
+      const didJoin = result?.data?.playerJoineds?.length >= 1 ?? false
       storeIsRegisteredAsPlayer.send({ type: 'setRegistered', isRegistered: didJoin })
-
       return didJoin
     },
     enabled: !!playerAccount?.address,
