@@ -41,6 +41,7 @@ contract SuperwalkGame is IEntropyConsumer, AccessControl {
         mapping(uint256 => ActionType) actions; // Turn => ActionType
         mapping(uint256 => PlayerInventoryItem) inventory;
         uint256[] inventoryItemIds;
+        uint256 lastItemPickTurn; // Track the last turn in which the player picked an item
         bool exists;
     }
 
@@ -115,7 +116,12 @@ contract SuperwalkGame is IEntropyConsumer, AccessControl {
         uint256 _cooldownValue
     );
     event PlayerJoined(address indexed _player);
-    event StepsCountReported(address indexed _player, uint256 _steps);
+    event StepsCountReported(
+        address indexed _player,
+        uint256 _steps,
+        uint256 _turnNumber,
+        uint256 _previousTurnSteps
+    );
     event IntentPickItem(address indexed _player, uint64 _sequenceNumber);
     event ItemPicked(
         address indexed _player,
@@ -138,16 +144,23 @@ contract SuperwalkGame is IEntropyConsumer, AccessControl {
         address indexed _fromPlayer,
         address indexed _toPlayer,
         uint256 _amount,
-        uint256 _turnNumber
+        uint256 _turnNumber,
+        uint256 _newCooldownEnd
     );
     event ItemUsed(
         address indexed _player,
         address indexed _targetPlayer,
         uint256 _itemId,
         uint256 _turnNumber,
-        bool _success
+        bool _success,
+        uint256 _newCooldownEnd
     );
-    event Blocked(address indexed _player, uint256 _turnNumber, bool _success);
+    event Blocked(
+        address indexed _player,
+        uint256 _turnNumber,
+        bool _success,
+        uint256 _newCooldownEnd
+    );
 
     // -- Modifiers --
     /**
@@ -155,17 +168,6 @@ contract SuperwalkGame is IEntropyConsumer, AccessControl {
      */
     modifier onlyPlayer() {
         require(players[msg.sender].exists, 'Player does not exist');
-        _;
-    }
-
-    /**
-     * @dev Ensures the action is performed within the allowed time window.
-     */
-    modifier withinActionWindow() {
-        require(
-            block.timestamp % TURN_DURATION < ACTION_WINDOW,
-            'Action window closed'
-        );
         _;
     }
 
@@ -184,7 +186,7 @@ contract SuperwalkGame is IEntropyConsumer, AccessControl {
         bribeErc20TokenAddress = _bribeToken;
         entropy = IEntropy(_entropy);
         entropyProvider = _entropyProvider;
-        turnNumber = 1;
+        turnNumber = 0;
         itemsTypesCount = 0;
 
         // Grant the contract deployer the default admin role: it will be able
@@ -265,6 +267,7 @@ contract SuperwalkGame is IEntropyConsumer, AccessControl {
      * @dev Allows a player to join the competition.
      */
     function joinCompetition() external {
+        require(turnNumber > 0, 'The competition did not start yet');
         require(
             !players[msg.sender].exists,
             'You already joined the competition.'
@@ -275,6 +278,7 @@ contract SuperwalkGame is IEntropyConsumer, AccessControl {
         newPlayer.lastSteps = 0;
         newPlayer.score = 0;
         newPlayer.cooldownEnd = 0;
+        newPlayer.lastItemPickTurn = turnNumber - 1;
         newPlayer.exists = true;
         playersList.push(msg.sender);
         emit PlayerJoined(msg.sender);
@@ -286,8 +290,15 @@ contract SuperwalkGame is IEntropyConsumer, AccessControl {
      */
     function pickItem(
         bytes32 userProvidedRandomNumber
-    ) external payable onlyPlayer withinActionWindow {
+    ) external payable onlyPlayer {
         Player storage player = players[msg.sender];
+
+        // Check if the player has already picked an item in the current turn
+        require(
+            player.lastItemPickTurn < turnNumber,
+            'You have already picked an item this turn.'
+        );
+
         require(
             player.currentSteps >=
                 player.lastSteps + THRESHOLD_NEW_STEP_ITEM_UNLOCK,
@@ -327,7 +338,12 @@ contract SuperwalkGame is IEntropyConsumer, AccessControl {
         require(players[_player].exists, 'This player does not exist');
         Player storage player = players[_player];
         player.currentSteps = updatedStepsCount;
-        emit StepsCountReported(_player, updatedStepsCount);
+        emit StepsCountReported(
+            _player,
+            updatedStepsCount,
+            turnNumber,
+            player.lastSteps
+        );
     }
 
     /**
@@ -342,7 +358,7 @@ contract SuperwalkGame is IEntropyConsumer, AccessControl {
         uint256 itemId,
         address targetPlayer,
         bytes32 userRandomNumber
-    ) external payable onlyPlayer withinActionWindow {
+    ) external payable onlyPlayer {
         Player storage player = players[msg.sender];
 
         require(
@@ -358,6 +374,10 @@ contract SuperwalkGame is IEntropyConsumer, AccessControl {
 
         if (actionType == ActionType.Bribe) {
             require(
+                block.timestamp % TURN_DURATION < ACTION_WINDOW,
+                'Too late to send a bribe this turn.'
+            );
+            require(
                 player.currentSteps > 0,
                 'You need to walk to bribe other players.'
             );
@@ -370,7 +390,13 @@ contract SuperwalkGame is IEntropyConsumer, AccessControl {
                 targetPlayer,
                 bribeAmount
             );
-            emit BribeSent(msg.sender, targetPlayer, bribeAmount, turnNumber);
+            emit BribeSent(
+                msg.sender,
+                targetPlayer,
+                bribeAmount,
+                turnNumber,
+                player.cooldownEnd
+            );
             // For now, bribes are always successful
             // However, to finance the fees and potentially create a reward pool for the top 3 players, we could make bribing a 55% success rate action, and give 75% of the bribe to the backend wallet/reward pool if the action failed
         } else {
@@ -444,6 +470,10 @@ contract SuperwalkGame is IEntropyConsumer, AccessControl {
             bool success;
 
             if (request.actionType == ActionType.UseItem) {
+                require(
+                    block.timestamp % TURN_DURATION < ACTION_WINDOW,
+                    'Too late to use an item this turn'
+                );
                 // Wheter or not the "use item" action performed by the player is successful
                 GameItem memory gameItem = items[request.itemId];
                 success =
@@ -454,21 +484,34 @@ contract SuperwalkGame is IEntropyConsumer, AccessControl {
                     'Item not in inventory'
                 );
                 player.inventory[request.itemId].quantity -= 1;
-
+                // Increase cooldown
+                player.cooldownEnd =
+                    player.cooldownEnd +
+                    gameItem.cooldownValue;
                 emit ItemUsed(
                     request.player,
                     request.targetPlayer,
                     request.itemId,
                     turnNumber,
-                    success
+                    success,
+                    player.cooldownEnd
                 );
             } else if (request.actionType == ActionType.Block) {
+                require(
+                    block.timestamp % TURN_DURATION < ACTION_WINDOW,
+                    'Too late to block attacks this turn'
+                );
                 // Wheter or not the "block" action performed by the player is successful
                 uint256 blockSuccessRate = (player.currentSteps * 100) /
                     player.lastSteps;
                 success = (uint256(randomNumber) % 100) < blockSuccessRate;
-                player.cooldownEnd = success ? turnNumber + 1 : turnNumber; // if the block is successful, then next turn the user will be in cool down for 1 turn ;
-                emit Blocked(request.player, turnNumber, success);
+                player.cooldownEnd = success ? turnNumber : turnNumber + 1; // if the block failed, then next turn the user will be in cool down for 1 turn ;
+                emit Blocked(
+                    request.player,
+                    turnNumber,
+                    success,
+                    player.cooldownEnd
+                );
             }
 
             delete pendingActions[sequenceNumber];
@@ -483,6 +526,8 @@ contract SuperwalkGame is IEntropyConsumer, AccessControl {
             uint256 randomItemId = (uint256(randomNumber) % itemsTypesCount) +
                 1; // Select a random item ID
             _addItemToPlayerInventory(player, randomItemId); // add items to player's inventory
+            // Mark the player as having picked an item this turn
+            player.lastItemPickTurn = turnNumber;
             emit ItemPicked(request.player, randomItemId, turnNumber);
             delete pendingItemPicks[sequenceNumber];
         }

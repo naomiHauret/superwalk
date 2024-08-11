@@ -1,1099 +1,1134 @@
 [
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "_entropy",
-                "type": "address"
-            },
-            {
-                "internalType": "address",
-                "name": "_entropyProvider",
-                "type": "address"
-            },
-            {
-                "internalType": "address",
-                "name": "_bribeToken",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "nonpayable",
-        "type": "constructor"
-    },
-    {
-        "inputs": [],
-        "name": "AccessControlBadConfirmation",
-        "type": "error"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "account",
-                "type": "address"
-            },
-            {
-                "internalType": "bytes32",
-                "name": "neededRole",
-                "type": "bytes32"
-            }
-        ],
-        "name": "AccessControlUnauthorizedAccount",
-        "type": "error"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "_player",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "_turnNumber",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "bool",
-                "name": "_success",
-                "type": "bool"
-            }
-        ],
-        "name": "Blocked",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "_fromPlayer",
-                "type": "address"
-            },
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "_toPlayer",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "_amount",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "_turnNumber",
-                "type": "uint256"
-            }
-        ],
-        "name": "BribeSent",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "uint256",
-                "name": "_itemId",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "string",
-                "name": "_name",
-                "type": "string"
-            },
-            {
-                "indexed": false,
-                "internalType": "enum SuperwalkGame.EffectType",
-                "name": "_effectType",
-                "type": "uint8"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "_effectValue",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "_successRate",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "enum SuperwalkGame.EffectValueType",
-                "name": "_effectValueType",
-                "type": "uint8"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "_cooldownValue",
-                "type": "uint256"
-            }
-        ],
-        "name": "GameItemCreated",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": false,
-                "internalType": "address",
-                "name": "_admin",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "address",
-                "name": "_entropyProvider",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "address",
-                "name": "_bribeErc20TokenAddress",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "_stepsItemUnlockThreshold",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "_turnDuration",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "_actionWindowDuration",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "_maxInventorySize",
-                "type": "uint256"
-            }
-        ],
-        "name": "InitializeSuperwalk",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "_player",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "enum SuperwalkGame.ActionType",
-                "name": "_actionType",
-                "type": "uint8"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "_itemId",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "address",
-                "name": "_targetPlayer",
-                "type": "address"
-            }
-        ],
-        "name": "IntentAction",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "_player",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint64",
-                "name": "_sequenceNumber",
-                "type": "uint64"
-            }
-        ],
-        "name": "IntentPickItem",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "_player",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "_itemId",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "_turnNumber",
-                "type": "uint256"
-            }
-        ],
-        "name": "ItemPicked",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "_player",
-                "type": "address"
-            },
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "_targetPlayer",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "_itemId",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "_turnNumber",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "bool",
-                "name": "_success",
-                "type": "bool"
-            }
-        ],
-        "name": "ItemUsed",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "_player",
-                "type": "address"
-            }
-        ],
-        "name": "PlayerJoined",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "bytes32",
-                "name": "role",
-                "type": "bytes32"
-            },
-            {
-                "indexed": true,
-                "internalType": "bytes32",
-                "name": "previousAdminRole",
-                "type": "bytes32"
-            },
-            {
-                "indexed": true,
-                "internalType": "bytes32",
-                "name": "newAdminRole",
-                "type": "bytes32"
-            }
-        ],
-        "name": "RoleAdminChanged",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "bytes32",
-                "name": "role",
-                "type": "bytes32"
-            },
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "account",
-                "type": "address"
-            },
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "sender",
-                "type": "address"
-            }
-        ],
-        "name": "RoleGranted",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "bytes32",
-                "name": "role",
-                "type": "bytes32"
-            },
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "account",
-                "type": "address"
-            },
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "sender",
-                "type": "address"
-            }
-        ],
-        "name": "RoleRevoked",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "_player",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "_score",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "_turnNumber",
-                "type": "uint256"
-            }
-        ],
-        "name": "ScoreUpdated",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "_player",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "_steps",
-                "type": "uint256"
-            }
-        ],
-        "name": "StepsCountReported",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "_turnNumber",
-                "type": "uint256"
-            }
-        ],
-        "name": "TurnEnded",
-        "type": "event"
-    },
-    {
-        "inputs": [],
-        "name": "ACTION_WINDOW",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "DEFAULT_ADMIN_ROLE",
-        "outputs": [
-            {
-                "internalType": "bytes32",
-                "name": "",
-                "type": "bytes32"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "GAME_MASTER_ROLE",
-        "outputs": [
-            {
-                "internalType": "bytes32",
-                "name": "",
-                "type": "bytes32"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "MAX_INVENTORY_SIZE",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "THRESHOLD_NEW_STEP_ITEM_UNLOCK",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "TURN_DURATION",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint64",
-                "name": "sequence",
-                "type": "uint64"
-            },
-            {
-                "internalType": "address",
-                "name": "provider",
-                "type": "address"
-            },
-            {
-                "internalType": "bytes32",
-                "name": "randomNumber",
-                "type": "bytes32"
-            }
-        ],
-        "name": "_entropyCallback",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "bribeErc20TokenAddress",
-        "outputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "string",
-                "name": "name",
-                "type": "string"
-            },
-            {
-                "internalType": "enum SuperwalkGame.EffectType",
-                "name": "effectType",
-                "type": "uint8"
-            },
-            {
-                "internalType": "uint256",
-                "name": "effectValue",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "successRate",
-                "type": "uint256"
-            },
-            {
-                "internalType": "enum SuperwalkGame.EffectValueType",
-                "name": "effectValueType",
-                "type": "uint8"
-            },
-            {
-                "internalType": "uint256",
-                "name": "cooldownValue",
-                "type": "uint256"
-            }
-        ],
-        "name": "createGameItemType",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "gameMaster",
-                "type": "address"
-            }
-        ],
-        "name": "declareGameMaster",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "endTurn",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "entropy",
-        "outputs": [
-            {
-                "internalType": "contract IEntropy",
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "entropyProvider",
-        "outputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "getInventory",
-        "outputs": [
-            {
-                "internalType": "uint256[]",
-                "name": "inventoryItemIds",
-                "type": "uint256[]"
-            },
-            {
-                "internalType": "uint256[]",
-                "name": "inventoryQuantities",
-                "type": "uint256[]"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "_playerAddress",
-                "type": "address"
-            }
-        ],
-        "name": "getPlayer",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "currentSteps",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "lastSteps",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "score",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "cooldownEnd",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "bytes32",
-                "name": "role",
-                "type": "bytes32"
-            }
-        ],
-        "name": "getRoleAdmin",
-        "outputs": [
-            {
-                "internalType": "bytes32",
-                "name": "",
-                "type": "bytes32"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "bytes32",
-                "name": "role",
-                "type": "bytes32"
-            },
-            {
-                "internalType": "address",
-                "name": "account",
-                "type": "address"
-            }
-        ],
-        "name": "grantRole",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "bytes32",
-                "name": "role",
-                "type": "bytes32"
-            },
-            {
-                "internalType": "address",
-                "name": "account",
-                "type": "address"
-            }
-        ],
-        "name": "hasRole",
-        "outputs": [
-            {
-                "internalType": "bool",
-                "name": "",
-                "type": "bool"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "name": "items",
-        "outputs": [
-            {
-                "internalType": "string",
-                "name": "name",
-                "type": "string"
-            },
-            {
-                "internalType": "enum SuperwalkGame.EffectType",
-                "name": "effectType",
-                "type": "uint8"
-            },
-            {
-                "internalType": "uint256",
-                "name": "effectValue",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "successRatePercentage",
-                "type": "uint256"
-            },
-            {
-                "internalType": "enum SuperwalkGame.EffectValueType",
-                "name": "effectValueType",
-                "type": "uint8"
-            },
-            {
-                "internalType": "uint256",
-                "name": "cooldownValue",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "itemsTypesCount",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "joinCompetition",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint64",
-                "name": "",
-                "type": "uint64"
-            }
-        ],
-        "name": "pendingActions",
-        "outputs": [
-            {
-                "internalType": "address",
-                "name": "player",
-                "type": "address"
-            },
-            {
-                "internalType": "enum SuperwalkGame.ActionType",
-                "name": "actionType",
-                "type": "uint8"
-            },
-            {
-                "internalType": "uint256",
-                "name": "itemId",
-                "type": "uint256"
-            },
-            {
-                "internalType": "address",
-                "name": "targetPlayer",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint64",
-                "name": "",
-                "type": "uint64"
-            }
-        ],
-        "name": "pendingItemPicks",
-        "outputs": [
-            {
-                "internalType": "address",
-                "name": "player",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "enum SuperwalkGame.ActionType",
-                "name": "actionType",
-                "type": "uint8"
-            },
-            {
-                "internalType": "uint256",
-                "name": "itemId",
-                "type": "uint256"
-            },
-            {
-                "internalType": "address",
-                "name": "targetPlayer",
-                "type": "address"
-            },
-            {
-                "internalType": "bytes32",
-                "name": "userRandomNumber",
-                "type": "bytes32"
-            }
-        ],
-        "name": "performAction",
-        "outputs": [],
-        "stateMutability": "payable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "bytes32",
-                "name": "userProvidedRandomNumber",
-                "type": "bytes32"
-            }
-        ],
-        "name": "pickItem",
-        "outputs": [],
-        "stateMutability": "payable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "name": "players",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "currentSteps",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "lastSteps",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "score",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "cooldownEnd",
-                "type": "uint256"
-            },
-            {
-                "internalType": "bool",
-                "name": "exists",
-                "type": "bool"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "name": "playersList",
-        "outputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "bytes32",
-                "name": "role",
-                "type": "bytes32"
-            },
-            {
-                "internalType": "address",
-                "name": "callerConfirmation",
-                "type": "address"
-            }
-        ],
-        "name": "renounceRole",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "_player",
-                "type": "address"
-            },
-            {
-                "internalType": "uint256",
-                "name": "_score",
-                "type": "uint256"
-            }
-        ],
-        "name": "reportScore",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "_player",
-                "type": "address"
-            },
-            {
-                "internalType": "uint256",
-                "name": "updatedStepsCount",
-                "type": "uint256"
-            }
-        ],
-        "name": "reportSteps",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "gameMaster",
-                "type": "address"
-            }
-        ],
-        "name": "revokeGameMaster",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "bytes32",
-                "name": "role",
-                "type": "bytes32"
-            },
-            {
-                "internalType": "address",
-                "name": "account",
-                "type": "address"
-            }
-        ],
-        "name": "revokeRole",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "bytes4",
-                "name": "interfaceId",
-                "type": "bytes4"
-            }
-        ],
-        "name": "supportsInterface",
-        "outputs": [
-            {
-                "internalType": "bool",
-                "name": "",
-                "type": "bool"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "turnNumber",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    }
+  {
+      "inputs": [
+          {
+              "internalType": "address",
+              "name": "_entropy",
+              "type": "address"
+          },
+          {
+              "internalType": "address",
+              "name": "_entropyProvider",
+              "type": "address"
+          },
+          {
+              "internalType": "address",
+              "name": "_bribeToken",
+              "type": "address"
+          }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+  },
+  {
+      "inputs": [],
+      "name": "AccessControlBadConfirmation",
+      "type": "error"
+  },
+  {
+      "inputs": [
+          {
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+          },
+          {
+              "internalType": "bytes32",
+              "name": "neededRole",
+              "type": "bytes32"
+          }
+      ],
+      "name": "AccessControlUnauthorizedAccount",
+      "type": "error"
+  },
+  {
+      "anonymous": false,
+      "inputs": [
+          {
+              "indexed": true,
+              "internalType": "address",
+              "name": "_player",
+              "type": "address"
+          },
+          {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_turnNumber",
+              "type": "uint256"
+          },
+          {
+              "indexed": false,
+              "internalType": "bool",
+              "name": "_success",
+              "type": "bool"
+          },
+          {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_newCooldownEnd",
+              "type": "uint256"
+          }
+      ],
+      "name": "Blocked",
+      "type": "event"
+  },
+  {
+      "anonymous": false,
+      "inputs": [
+          {
+              "indexed": true,
+              "internalType": "address",
+              "name": "_fromPlayer",
+              "type": "address"
+          },
+          {
+              "indexed": true,
+              "internalType": "address",
+              "name": "_toPlayer",
+              "type": "address"
+          },
+          {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_amount",
+              "type": "uint256"
+          },
+          {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_turnNumber",
+              "type": "uint256"
+          },
+          {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_newCooldownEnd",
+              "type": "uint256"
+          }
+      ],
+      "name": "BribeSent",
+      "type": "event"
+  },
+  {
+      "anonymous": false,
+      "inputs": [
+          {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "_itemId",
+              "type": "uint256"
+          },
+          {
+              "indexed": false,
+              "internalType": "string",
+              "name": "_name",
+              "type": "string"
+          },
+          {
+              "indexed": false,
+              "internalType": "enum SuperwalkGame.EffectType",
+              "name": "_effectType",
+              "type": "uint8"
+          },
+          {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_effectValue",
+              "type": "uint256"
+          },
+          {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_successRate",
+              "type": "uint256"
+          },
+          {
+              "indexed": false,
+              "internalType": "enum SuperwalkGame.EffectValueType",
+              "name": "_effectValueType",
+              "type": "uint8"
+          },
+          {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_cooldownValue",
+              "type": "uint256"
+          }
+      ],
+      "name": "GameItemCreated",
+      "type": "event"
+  },
+  {
+      "anonymous": false,
+      "inputs": [
+          {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_admin",
+              "type": "address"
+          },
+          {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_entropyProvider",
+              "type": "address"
+          },
+          {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_bribeErc20TokenAddress",
+              "type": "address"
+          },
+          {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_stepsItemUnlockThreshold",
+              "type": "uint256"
+          },
+          {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_turnDuration",
+              "type": "uint256"
+          },
+          {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_actionWindowDuration",
+              "type": "uint256"
+          },
+          {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_maxInventorySize",
+              "type": "uint256"
+          }
+      ],
+      "name": "InitializeSuperwalk",
+      "type": "event"
+  },
+  {
+      "anonymous": false,
+      "inputs": [
+          {
+              "indexed": true,
+              "internalType": "address",
+              "name": "_player",
+              "type": "address"
+          },
+          {
+              "indexed": false,
+              "internalType": "enum SuperwalkGame.ActionType",
+              "name": "_actionType",
+              "type": "uint8"
+          },
+          {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_itemId",
+              "type": "uint256"
+          },
+          {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_targetPlayer",
+              "type": "address"
+          }
+      ],
+      "name": "IntentAction",
+      "type": "event"
+  },
+  {
+      "anonymous": false,
+      "inputs": [
+          {
+              "indexed": true,
+              "internalType": "address",
+              "name": "_player",
+              "type": "address"
+          },
+          {
+              "indexed": false,
+              "internalType": "uint64",
+              "name": "_sequenceNumber",
+              "type": "uint64"
+          }
+      ],
+      "name": "IntentPickItem",
+      "type": "event"
+  },
+  {
+      "anonymous": false,
+      "inputs": [
+          {
+              "indexed": true,
+              "internalType": "address",
+              "name": "_player",
+              "type": "address"
+          },
+          {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_itemId",
+              "type": "uint256"
+          },
+          {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_turnNumber",
+              "type": "uint256"
+          }
+      ],
+      "name": "ItemPicked",
+      "type": "event"
+  },
+  {
+      "anonymous": false,
+      "inputs": [
+          {
+              "indexed": true,
+              "internalType": "address",
+              "name": "_player",
+              "type": "address"
+          },
+          {
+              "indexed": true,
+              "internalType": "address",
+              "name": "_targetPlayer",
+              "type": "address"
+          },
+          {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_itemId",
+              "type": "uint256"
+          },
+          {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_turnNumber",
+              "type": "uint256"
+          },
+          {
+              "indexed": false,
+              "internalType": "bool",
+              "name": "_success",
+              "type": "bool"
+          },
+          {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_newCooldownEnd",
+              "type": "uint256"
+          }
+      ],
+      "name": "ItemUsed",
+      "type": "event"
+  },
+  {
+      "anonymous": false,
+      "inputs": [
+          {
+              "indexed": true,
+              "internalType": "address",
+              "name": "_player",
+              "type": "address"
+          }
+      ],
+      "name": "PlayerJoined",
+      "type": "event"
+  },
+  {
+      "anonymous": false,
+      "inputs": [
+          {
+              "indexed": true,
+              "internalType": "bytes32",
+              "name": "role",
+              "type": "bytes32"
+          },
+          {
+              "indexed": true,
+              "internalType": "bytes32",
+              "name": "previousAdminRole",
+              "type": "bytes32"
+          },
+          {
+              "indexed": true,
+              "internalType": "bytes32",
+              "name": "newAdminRole",
+              "type": "bytes32"
+          }
+      ],
+      "name": "RoleAdminChanged",
+      "type": "event"
+  },
+  {
+      "anonymous": false,
+      "inputs": [
+          {
+              "indexed": true,
+              "internalType": "bytes32",
+              "name": "role",
+              "type": "bytes32"
+          },
+          {
+              "indexed": true,
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+          },
+          {
+              "indexed": true,
+              "internalType": "address",
+              "name": "sender",
+              "type": "address"
+          }
+      ],
+      "name": "RoleGranted",
+      "type": "event"
+  },
+  {
+      "anonymous": false,
+      "inputs": [
+          {
+              "indexed": true,
+              "internalType": "bytes32",
+              "name": "role",
+              "type": "bytes32"
+          },
+          {
+              "indexed": true,
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+          },
+          {
+              "indexed": true,
+              "internalType": "address",
+              "name": "sender",
+              "type": "address"
+          }
+      ],
+      "name": "RoleRevoked",
+      "type": "event"
+  },
+  {
+      "anonymous": false,
+      "inputs": [
+          {
+              "indexed": true,
+              "internalType": "address",
+              "name": "_player",
+              "type": "address"
+          },
+          {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_score",
+              "type": "uint256"
+          },
+          {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_turnNumber",
+              "type": "uint256"
+          }
+      ],
+      "name": "ScoreUpdated",
+      "type": "event"
+  },
+  {
+      "anonymous": false,
+      "inputs": [
+          {
+              "indexed": true,
+              "internalType": "address",
+              "name": "_player",
+              "type": "address"
+          },
+          {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_steps",
+              "type": "uint256"
+          },
+          {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_turnNumber",
+              "type": "uint256"
+          },
+          {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_previousTurnSteps",
+              "type": "uint256"
+          }
+      ],
+      "name": "StepsCountReported",
+      "type": "event"
+  },
+  {
+      "anonymous": false,
+      "inputs": [
+          {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_turnNumber",
+              "type": "uint256"
+          }
+      ],
+      "name": "TurnEnded",
+      "type": "event"
+  },
+  {
+      "inputs": [],
+      "name": "ACTION_WINDOW",
+      "outputs": [
+          {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+          }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+  },
+  {
+      "inputs": [],
+      "name": "DEFAULT_ADMIN_ROLE",
+      "outputs": [
+          {
+              "internalType": "bytes32",
+              "name": "",
+              "type": "bytes32"
+          }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+  },
+  {
+      "inputs": [],
+      "name": "GAME_MASTER_ROLE",
+      "outputs": [
+          {
+              "internalType": "bytes32",
+              "name": "",
+              "type": "bytes32"
+          }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+  },
+  {
+      "inputs": [],
+      "name": "MAX_INVENTORY_SIZE",
+      "outputs": [
+          {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+          }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+  },
+  {
+      "inputs": [],
+      "name": "THRESHOLD_NEW_STEP_ITEM_UNLOCK",
+      "outputs": [
+          {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+          }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+  },
+  {
+      "inputs": [],
+      "name": "TURN_DURATION",
+      "outputs": [
+          {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+          }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+  },
+  {
+      "inputs": [
+          {
+              "internalType": "uint64",
+              "name": "sequence",
+              "type": "uint64"
+          },
+          {
+              "internalType": "address",
+              "name": "provider",
+              "type": "address"
+          },
+          {
+              "internalType": "bytes32",
+              "name": "randomNumber",
+              "type": "bytes32"
+          }
+      ],
+      "name": "_entropyCallback",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+  },
+  {
+      "inputs": [],
+      "name": "bribeErc20TokenAddress",
+      "outputs": [
+          {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+          }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+  },
+  {
+      "inputs": [
+          {
+              "internalType": "string",
+              "name": "name",
+              "type": "string"
+          },
+          {
+              "internalType": "enum SuperwalkGame.EffectType",
+              "name": "effectType",
+              "type": "uint8"
+          },
+          {
+              "internalType": "uint256",
+              "name": "effectValue",
+              "type": "uint256"
+          },
+          {
+              "internalType": "uint256",
+              "name": "successRate",
+              "type": "uint256"
+          },
+          {
+              "internalType": "enum SuperwalkGame.EffectValueType",
+              "name": "effectValueType",
+              "type": "uint8"
+          },
+          {
+              "internalType": "uint256",
+              "name": "cooldownValue",
+              "type": "uint256"
+          }
+      ],
+      "name": "createGameItemType",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+  },
+  {
+      "inputs": [
+          {
+              "internalType": "address",
+              "name": "gameMaster",
+              "type": "address"
+          }
+      ],
+      "name": "declareGameMaster",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+  },
+  {
+      "inputs": [],
+      "name": "endTurn",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+  },
+  {
+      "inputs": [],
+      "name": "entropy",
+      "outputs": [
+          {
+              "internalType": "contract IEntropy",
+              "name": "",
+              "type": "address"
+          }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+  },
+  {
+      "inputs": [],
+      "name": "entropyProvider",
+      "outputs": [
+          {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+          }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+  },
+  {
+      "inputs": [],
+      "name": "getInventory",
+      "outputs": [
+          {
+              "internalType": "uint256[]",
+              "name": "inventoryItemIds",
+              "type": "uint256[]"
+          },
+          {
+              "internalType": "uint256[]",
+              "name": "inventoryQuantities",
+              "type": "uint256[]"
+          }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+  },
+  {
+      "inputs": [
+          {
+              "internalType": "address",
+              "name": "_playerAddress",
+              "type": "address"
+          }
+      ],
+      "name": "getPlayer",
+      "outputs": [
+          {
+              "internalType": "uint256",
+              "name": "currentSteps",
+              "type": "uint256"
+          },
+          {
+              "internalType": "uint256",
+              "name": "lastSteps",
+              "type": "uint256"
+          },
+          {
+              "internalType": "uint256",
+              "name": "score",
+              "type": "uint256"
+          },
+          {
+              "internalType": "uint256",
+              "name": "cooldownEnd",
+              "type": "uint256"
+          }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+  },
+  {
+      "inputs": [
+          {
+              "internalType": "bytes32",
+              "name": "role",
+              "type": "bytes32"
+          }
+      ],
+      "name": "getRoleAdmin",
+      "outputs": [
+          {
+              "internalType": "bytes32",
+              "name": "",
+              "type": "bytes32"
+          }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+  },
+  {
+      "inputs": [
+          {
+              "internalType": "bytes32",
+              "name": "role",
+              "type": "bytes32"
+          },
+          {
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+          }
+      ],
+      "name": "grantRole",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+  },
+  {
+      "inputs": [
+          {
+              "internalType": "bytes32",
+              "name": "role",
+              "type": "bytes32"
+          },
+          {
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+          }
+      ],
+      "name": "hasRole",
+      "outputs": [
+          {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+          }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+  },
+  {
+      "inputs": [
+          {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+          }
+      ],
+      "name": "items",
+      "outputs": [
+          {
+              "internalType": "string",
+              "name": "name",
+              "type": "string"
+          },
+          {
+              "internalType": "enum SuperwalkGame.EffectType",
+              "name": "effectType",
+              "type": "uint8"
+          },
+          {
+              "internalType": "uint256",
+              "name": "effectValue",
+              "type": "uint256"
+          },
+          {
+              "internalType": "uint256",
+              "name": "successRatePercentage",
+              "type": "uint256"
+          },
+          {
+              "internalType": "enum SuperwalkGame.EffectValueType",
+              "name": "effectValueType",
+              "type": "uint8"
+          },
+          {
+              "internalType": "uint256",
+              "name": "cooldownValue",
+              "type": "uint256"
+          }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+  },
+  {
+      "inputs": [],
+      "name": "itemsTypesCount",
+      "outputs": [
+          {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+          }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+  },
+  {
+      "inputs": [],
+      "name": "joinCompetition",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+  },
+  {
+      "inputs": [
+          {
+              "internalType": "uint64",
+              "name": "",
+              "type": "uint64"
+          }
+      ],
+      "name": "pendingActions",
+      "outputs": [
+          {
+              "internalType": "address",
+              "name": "player",
+              "type": "address"
+          },
+          {
+              "internalType": "enum SuperwalkGame.ActionType",
+              "name": "actionType",
+              "type": "uint8"
+          },
+          {
+              "internalType": "uint256",
+              "name": "itemId",
+              "type": "uint256"
+          },
+          {
+              "internalType": "address",
+              "name": "targetPlayer",
+              "type": "address"
+          }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+  },
+  {
+      "inputs": [
+          {
+              "internalType": "uint64",
+              "name": "",
+              "type": "uint64"
+          }
+      ],
+      "name": "pendingItemPicks",
+      "outputs": [
+          {
+              "internalType": "address",
+              "name": "player",
+              "type": "address"
+          }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+  },
+  {
+      "inputs": [
+          {
+              "internalType": "enum SuperwalkGame.ActionType",
+              "name": "actionType",
+              "type": "uint8"
+          },
+          {
+              "internalType": "uint256",
+              "name": "itemId",
+              "type": "uint256"
+          },
+          {
+              "internalType": "address",
+              "name": "targetPlayer",
+              "type": "address"
+          },
+          {
+              "internalType": "bytes32",
+              "name": "userRandomNumber",
+              "type": "bytes32"
+          }
+      ],
+      "name": "performAction",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+  },
+  {
+      "inputs": [
+          {
+              "internalType": "bytes32",
+              "name": "userProvidedRandomNumber",
+              "type": "bytes32"
+          }
+      ],
+      "name": "pickItem",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+  },
+  {
+      "inputs": [
+          {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+          }
+      ],
+      "name": "players",
+      "outputs": [
+          {
+              "internalType": "uint256",
+              "name": "currentSteps",
+              "type": "uint256"
+          },
+          {
+              "internalType": "uint256",
+              "name": "lastSteps",
+              "type": "uint256"
+          },
+          {
+              "internalType": "uint256",
+              "name": "score",
+              "type": "uint256"
+          },
+          {
+              "internalType": "uint256",
+              "name": "cooldownEnd",
+              "type": "uint256"
+          },
+          {
+              "internalType": "uint256",
+              "name": "lastItemPickTurn",
+              "type": "uint256"
+          },
+          {
+              "internalType": "bool",
+              "name": "exists",
+              "type": "bool"
+          }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+  },
+  {
+      "inputs": [
+          {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+          }
+      ],
+      "name": "playersList",
+      "outputs": [
+          {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+          }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+  },
+  {
+      "inputs": [
+          {
+              "internalType": "bytes32",
+              "name": "role",
+              "type": "bytes32"
+          },
+          {
+              "internalType": "address",
+              "name": "callerConfirmation",
+              "type": "address"
+          }
+      ],
+      "name": "renounceRole",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+  },
+  {
+      "inputs": [
+          {
+              "internalType": "address",
+              "name": "_player",
+              "type": "address"
+          },
+          {
+              "internalType": "uint256",
+              "name": "_score",
+              "type": "uint256"
+          }
+      ],
+      "name": "reportScore",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+  },
+  {
+      "inputs": [
+          {
+              "internalType": "address",
+              "name": "_player",
+              "type": "address"
+          },
+          {
+              "internalType": "uint256",
+              "name": "updatedStepsCount",
+              "type": "uint256"
+          }
+      ],
+      "name": "reportSteps",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+  },
+  {
+      "inputs": [
+          {
+              "internalType": "address",
+              "name": "gameMaster",
+              "type": "address"
+          }
+      ],
+      "name": "revokeGameMaster",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+  },
+  {
+      "inputs": [
+          {
+              "internalType": "bytes32",
+              "name": "role",
+              "type": "bytes32"
+          },
+          {
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+          }
+      ],
+      "name": "revokeRole",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+  },
+  {
+      "inputs": [
+          {
+              "internalType": "bytes4",
+              "name": "interfaceId",
+              "type": "bytes4"
+          }
+      ],
+      "name": "supportsInterface",
+      "outputs": [
+          {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+          }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+  },
+  {
+      "inputs": [],
+      "name": "turnNumber",
+      "outputs": [
+          {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+          }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+  }
 ]

@@ -4,7 +4,7 @@ Smart contracts for Superwalk, a turn-based game that uses the players' real wor
 
 - `Superwalk.sol` : Logic running the game and its mechanics.
 
-Deployed to [Base Sepolia](https://base-sepolia.blockscout.com/address/0x8808B527848BA6a2C5401C3cD767783A2D1704A5) ;
+Deployed to [Base Sepolia](https://base-sepolia.blockscout.com/address/0x716cD40b5C33C261D9318Bf80d5cdF5503Ff320e) ;
 
 Thirdweb based Account factory was also deployed to [Base Sepolia](https://base-sepolia.blockscout.com/address/0x22e1b4C215ad327BfcB6383A132FC02fb2fCAEf6).
 
