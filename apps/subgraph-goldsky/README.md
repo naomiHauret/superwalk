@@ -3,7 +3,7 @@
 No-code subgraphs for Superwalk.
 Made with [Goldsky no-code tool](https://docs.goldsky.com/subgraphs/guides/create-a-no-code-subgraph#video-walkthrough).
 
-- [Superwalk game subgraph](https://api.goldsky.com/api/public/project_clzbhwx2klyjj01xs95bx1d75/subgraphs/game-base-sepolia/1.0/gn)
+- [Superwalk game subgraph](https://api.goldsky.com/api/public/project_clzbhwx2klyjj01xs95bx1d75/subgraphs/game-base-sepolia/1.3/gn)
 
 > Prerequisite : have a Goldsky account & API key, a deployed smart contract, and have the Goldsky CLI installed
 
@@ -33,7 +33,7 @@ Your config should look like this :
     "instances": [
         {
             "abi": "game",
-            "address": "0x8808B527848BA6a2C5401C3cD767783A2D1704A5",
+            "address": "0x716cD40b5C33C261D9318Bf80d5cdF5503Ff320e",
             "chain": "base-sepolia",
             "startBlock": 13755736
         }
